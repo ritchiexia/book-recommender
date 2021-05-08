@@ -71,11 +71,9 @@ class User(Resource):
 		args = user_update_args.parse_args()
         book_id = args["book_id"]
         sentiment = args["sentiment"]
-		result = db.collect.findOne({"_id":user_id})
-        #if not result["swipes"]:
-        #not done
-
-		return result
+        swipe_data = db["swipe-data"]
+        swipe_data.insert_one({user_id:{book_id:sentiment}})
+		return {book_id:sentiment}
 
 api.add_resource(User, "/user/<int:user_id>")
 
