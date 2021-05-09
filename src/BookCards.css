@@ -1,3 +1,8 @@
+/*
+ * General format of header and styling follows this tutorial: https://www.youtube.com/watch?v=DQfeB_FKKkc&t=5317s, but slightly adjusted.
+ * In general we are just copying Tinder's layout
+*/
+
 .card {
     position: relative;
     width: 600px;
@@ -11,6 +16,14 @@
 }
 
 .card > h3 {
+    font-size: x-large;
+    position: absolute;
+    bottom: 30px;
+    color: white;
+}
+
+.card > h4 {
+    font-size: smaller;
     position: absolute;
     bottom: 10px;
     color: white;

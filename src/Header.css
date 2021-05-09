@@ -1,3 +1,8 @@
+/*
+ * General format of header and styling follows this tutorial: https://www.youtube.com/watch?v=DQfeB_FKKkc&t=5317s, but slightly adjusted.
+ * In general we are just copying Tinder's layout
+*/
+
 .header {
     display: flex;
     justify-content: space-between;

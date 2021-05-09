@@ -1,3 +1,7 @@
+/*
+ * Code written following TinderCards documentation (https://www.npmjs.com/package/react-tinder-card)
+*/
+
 import React, {useEffect, useRef} from 'react'
 import TinderCard from "react-tinder-card";
 import './BookCards.css';
@@ -120,6 +124,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                     <TinderCard className="swipe" key={book.id} onSwipe={onSwipe} onCardLeftScreen={onCardLeftScreen}>
                         <div style={{backgroundImage: `url(${book.url})`}} className="card">
                             <h3>{book.name}</h3>
+                            <h4>{book.author}</h4>
                         </div>
                     </TinderCard>
                 ))}
