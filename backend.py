@@ -203,11 +203,22 @@ def improve(swipe, pred, user):
 
 
 def get_recs(user_id):
-
-  return [{"book id":1, "book title": "book one", "author name": "author one", "url":"url1"}, #just the format of what needs to be returned
-  {"book id":2, "book title": "book two", "author name": "author two", "url":"url2"},
-  {"book id":3, "book title": "book three", "author name": "author three", "url":"url3"},
-  {"book id":4, "book title": "book four", "author name": "author four", "url":"url4"},
-  {"book id":5, "book title": "book five", "author name": "author five", "url":"url5"}]
+  #Assuming right now users stored in user-array, may need to change this to accomadate grabbing it from the database
+  currUser = users[user_id] #This array needs to be definied on initialization
+  recs = currUser.get_books()
+  recList = [],
+  for book_id, _ in recs:
+    title, author, url = ds_full.get_book_info(book_id)
+    recList.append({"book id":book_id, "book title":title,"author name":author,"url":url})
+  return recList
 
 def update_model(user_id, init_flag, sentiments): #sentiments is (book_id,sentiment)
+  if init_flag:
+    ratings.append([sentiments[0].sentiments[1]) #this will need to be stored somewhere for user setup
+    if len(ratings) == 20:
+      users[user_id] = User(ratings, model_matrix, user_id, emb_dim)
+  else:
+    exp_rec = getRec(users[user_id],sentiments[0])
+    result = sentiments[1]
+    improve(result, exp_rec,users[user_id]) 
+
