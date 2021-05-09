@@ -202,10 +202,12 @@ def improve(swipe, pred, user):
   user.rl_model.optimizer.step()
 
 
-def get_recs(user_id, sentiments): #sentiments is in the format [(book_id1, sentiment1),(book_id2, sentiment2),...]
+def get_recs(user_id):
 
   return [{"book id":1, "book title": "book one", "author name": "author one", "url":"url1"}, #just the format of what needs to be returned
   {"book id":2, "book title": "book two", "author name": "author two", "url":"url2"},
   {"book id":3, "book title": "book three", "author name": "author three", "url":"url3"},
   {"book id":4, "book title": "book four", "author name": "author four", "url":"url4"},
   {"book id":5, "book title": "book five", "author name": "author five", "url":"url5"}]
+
+def update_model(user_id, init_flag, sentiments): #sentiments is (book_id,sentiment)
