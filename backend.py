@@ -1,9 +1,7 @@
-import torch, torchtext, numpy as np
+import torch, numpy as np
 import pandas as pd, csv
 from torch import nn, optim
 from tqdm.auto import tqdm
-import matplotlib.pyplot as plt
-import pdb
 torch.manual_seed(291)
 np.random.seed(291)
 import pandas as pd
@@ -33,9 +31,7 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(self, i):  
       return (self.coords[i], self.ratings[i]) 
 #Dataset set up code
-!wget https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/ratings.csv #Not sure this same formatting will work in a .py file
-!wget https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv #Same as above
-ds_full = Dataset('ratings.csv', 'books.csv')
+ds_full = Dataset('goodbooks-ratings.csv', 'goodbooks.csv')
 n_train = int(0.8 * len(ds_full))
 n_test = len(ds_full) - n_train
 rng = torch.Generator().manual_seed(291)
@@ -67,7 +63,6 @@ class BookRecommenderEmbeddingML(nn.Module):
     return torch.sigmoid(dot) * 5.5
 #Training code
 device = torch.device('cuda:0')
-
 def run_test(model, ldr, crit):
     total_loss, total_count = 0, 0
     model.eval()
@@ -159,17 +154,17 @@ class User ():
 def lossFunction(self, expected, rating): 
   return abs(expected - rating)
 
-def create_matrix():
+def create_matrix(model):
   index = torch.IntTensor([range(53424)])
-  index = index.to(device)
+  #index = index.to(device)
   userMat = model.user_embedding(index)[0]
   index = torch.IntTensor([range(10000)])
-  index = index.to(device)
+ # index = index.to(device)
   old = model.book_embedding(index)[0]
   bookMat = torch.zeros(24,10000)
   for i in range(24):
     bookMat[i] = torch.narrow(old,1,i,1).flatten()
-  bookMat = bookMat.to(device)
+  #bookMat = bookMat.to(device)
   result = userMat@bookMat
   return torch.sigmoid(result)*5.5
 
@@ -214,7 +209,7 @@ def get_recs(user_id):
 
 def update_model(user_id, init_flag, sentiments): #sentiments is (book_id,sentiment)
   if init_flag:
-    ratings.append([sentiments[0].sentiments[1]) #this will need to be stored somewhere for user setup
+    ratings.append([sentiments[0].sentiments[1]]) #this will need to be stored somewhere for user setup
     if len(ratings) == 20:
       users[user_id] = User(ratings, model_matrix, user_id, emb_dim)
       users.append(0)

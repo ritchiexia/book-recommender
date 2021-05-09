@@ -5,7 +5,7 @@ from flask import jsonify
 from flask_pymongo import PyMongo
 import pymongo
 from pymongo import MongoClient
-from backend import User, find_paired_user, RLModel, get_recs, update_model, create_matrix, create_book_feature_matrix
+from backend import User, find_paired_user, RLModel, get_recs, update_model, create_matrix, create_book_feature_matrix, BookRecommenderEmbeddingML
 import torch
 
 app = Flask(__name__)
@@ -20,10 +20,10 @@ db = client["book-recommender"]
 collect = db["user-data"]
 
 #Code for importing model will go here
-load = torch.load('model.pt')
+load = torch.load('model.pt', map_location=torch.device('cpu'))
 model = load['best-model']
-fullMat = create_matrix()
-bookMat = create_book_feature_matrix()
+fullMat = create_matrix(model)
+bookMat = create_book_feature_matrix(model)
 
 users = [0] * 10
 user_swipe_args = reqparse.RequestParser()
@@ -43,7 +43,7 @@ class Book(Resource):
     def get(self, user_id):
         #abort_if_id_dne(user_id)
         recs = get_recs(user_id)
-        return jsonify(jsonify({recs[0]}), jsonify(jsonify(recs[1])), jsonify(jsonify({recs[2])), jsonify(jsonify(recs[3])), jsonify(jsonify(recs[4])))
+        return jsonify(jsonify({recs[0]}), jsonify(jsonify({recs[1]})), jsonify(jsonify({recs[2]})), jsonify(jsonify({recs[3]})), jsonify(jsonify({recs[4]})))
 
     def put(self, user_id):
         #abort_if_id_dne(user_id)
