@@ -17,22 +17,10 @@ client = pymongo.MongoClient("mongodb+srv://dbUser:cpen291@cluster0.02dfd.mongod
 db = client["book-recommender"]
 collect = db["user-data"]
 
-user_put_args = reqparse.RequestParser()
-user_put_args.add_argument("_id", type=int, help = "user id required", required=True)
-user_put_args.add_argument("book 1 id", type=int, help="book 1 id required", required=True)
-user_put_args.add_argument("book 1 rating", type=int, help="book 1 rating required", required=True)
-user_put_args.add_argument("book 2 id", type=int, help="book 2 id required", required=True)
-user_put_args.add_argument("book 2 rating", type=int, help="book 2 rating required", required=True)
-user_put_args.add_argument("book 3 id", type=int, help="book 3 id required", required=True)
-user_put_args.add_argument("book 3 rating", type=int, help="book 3 rating required", required=True)
-user_put_args.add_argument("book 4 id", type=int, help="book 4 id required", required=True)
-user_put_args.add_argument("book 4 rating", type=int, help="book 4 rating required", required=True)
-user_put_args.add_argument("book 5 id", type=int, help="book 5 id required", required=True)
-user_put_args.add_argument("book 5 rating", type=int, help="book 5 rating required", required=True)
-
-user_update_args = reqparse.RequestParser()
-user_update_args.add_argument("book_id", type=int, help="Book id is required")
-user_update_args.add_argument("sentiment", type=str, help="swipe sentiment is required")
+user_swipe_args = reqparse.RequestParser()
+user_swipe_args.add_argument("init_flag", type=int, help="init flag is required")
+user_swipe_args.add_argument("book_id", type=int, help="Book id is required")
+user_swipe_args.add_argument("sentiment", type=str, help="swipe sentiment is required")
 
 def abort_if_id_dne(user_id):
     if db.collect.find({"_id": user_id}).count()==0:
@@ -42,40 +30,24 @@ def abort_if_id_exists(user_id):
     if db.collect.find({"_id": user_id}).count()>0:
         abort(409, message="User already exists")
 
-class User(Resource):
+class Book(Resource):
     def get(self, user_id):
-        abort_if_id_dne(user_id)
-        #get a book rec from back end and return the book id
-        return jsonify(jsonify({"book id":1, "book title": "book one", "author name": "author one", "url":"url1"}), #just a template to remember the format to return
-        jsonify(jsonify({"book id":2, "book title": "book two", "author name": "author two", "url":"url2"})),
-        jsonify(jsonify({"book id":3, "book title": "book three", "author name": "author three", "url":"url3"})),
-        jsonify(jsonify({"book id":4, "book title": "book four", "author name": "author four", "url":"url4"})),
-        jsonify(jsonify({"book id":5, "book title": "book five", "author name": "author five", "url":"url5"})))
+        #abort_if_id_dne(user_id)
+        recs = get_recs(user_id)
+        return jsonify(jsonify({recs[0]}), jsonify(jsonify(recs[1])), jsonify(jsonify({recs[2])), jsonify(jsonify(recs[3])), jsonify(jsonify(recs[4])))
 
     def put(self, user_id):
-        # check if user_id and args["_id"] are the same!!!
-        args = user_put_args.parse_args()
-        print(args["_id"])
-        abort_if_id_exists(args["_id"])
-        collect.insert_one(args)
-        #args is a list of book id/rating tuples for a specific user
-        return {"entry": args}, 201
+        #abort_if_id_dne(user_id)
+        args = user_swipe_args.parse_args()
+        book_id = args["book_id"]
+        sentiment = args["sentiment"]
+        update_model(user_id,args["init_flag"],(book_id,sentiment))
+        return (book_id,sentiment) #not used
 
     def delete(self, user_id):
         collect.delete_one({"_id": user_id})
         return '', 204
 
-    
-    def patch(self, user_id):
-        abort_if_id_dne(user_id)
-		args = user_update_args.parse_args()
-        book_id = args["book_id"]
-        sentiment = args["sentiment"]
-        swipe_data = db["swipe-data"]
-        swipe_data.insert_one({user_id:{book_id:sentiment}})
-		return {book_id:sentiment}
+api.add_resource(Book, "/book/<int:user_id>")
 
-api.add_resource(User, "/user/<int:user_id>")
-
-if __name__ == "__main__":
-    app.run(debug=True)
+app.run(debug=True)
