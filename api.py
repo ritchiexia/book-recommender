@@ -5,6 +5,8 @@ from flask import jsonify
 from flask_pymongo import PyMongo
 import pymongo
 from pymongo import MongoClient
+from backend import User, find_paired_user, RLModel, get_recs, update_model, create_matrix, create_book_feature_matrix
+import torch
 
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = 'bookuser-db'
@@ -17,6 +19,13 @@ client = pymongo.MongoClient("mongodb+srv://dbUser:cpen291@cluster0.02dfd.mongod
 db = client["book-recommender"]
 collect = db["user-data"]
 
+#Code for importing model will go here
+load = torch.load('model.pt')
+model = load['best-model']
+fullMat = create_matrix()
+bookMat = create_book_feature_matrix()
+
+users = [0] * 10
 user_swipe_args = reqparse.RequestParser()
 user_swipe_args.add_argument("init_flag", type=int, help="init flag is required")
 user_swipe_args.add_argument("book_id", type=int, help="Book id is required")

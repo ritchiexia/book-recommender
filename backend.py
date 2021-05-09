@@ -217,6 +217,7 @@ def update_model(user_id, init_flag, sentiments): #sentiments is (book_id,sentim
     ratings.append([sentiments[0].sentiments[1]) #this will need to be stored somewhere for user setup
     if len(ratings) == 20:
       users[user_id] = User(ratings, model_matrix, user_id, emb_dim)
+      users.append(0)
   else:
     exp_rec = getRec(users[user_id],sentiments[0])
     result = sentiments[1]
