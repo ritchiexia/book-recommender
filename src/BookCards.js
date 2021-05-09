@@ -12,6 +12,7 @@ const directions = {
 function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
     const refContainer= useRef({current: false});
     const currBook = useRef({current: null});
+    const init_flag = useRef({current: 20});
 
     useEffect(() => {
         console.log("Current book stack:", {books});
@@ -40,10 +41,10 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
             console.log("Book stack is empty! Fetching more books...");
 
             // call fetch to endpoint to get next 5 BEST recommendations
-            // fetch('/books').then(res => res.json()).then((value) => {
-            //     // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
-            //     setBooks(value);
-            // });
+            fetch('localhost:5000/books/1').then(res => res.json()).then((value) => {
+                // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
+                setBooks(value);
+            });
 
         }
         // FOR TESTING *** REMOVE AFTER DONE
@@ -56,42 +57,45 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
 
     const onCardLeftScreen = (direction) => {
         const requestOptions = {
-            method: 'POST',
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title: 'Sending positive sentiment...' })
         };
         switch (direction) {
             case directions.LIKE:
                 // send the book id and "1" response to backend
-                // fetch('/books', requestOptions)
-                //     .then(response => response.json())
-                //     .then(data => this.setState({ id: 1, bookid: books[books.length-1], sentiment: 1 }));
-
+                fetch('localhost:5000/books/1', requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 }));
+                init_flag.current--;
                 refContainer.current = true;
 
                 console.log("Liked");
                 break;
             case directions.DISLIKE:
                 // send the book id and "0" response to backend
-                // fetch('/books', requestOptions)
-                //     .then(response => response.json())
-                //     .then(data => this.setState({ id: 1, bookid: books[books.length-1], sentiment: 0 }));
+                fetch('localhost:5000/books/1', requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
+                init_flag.current--;
 
                 console.log("Disliked");
                 break;
             case directions.READ_LIKE:
                 // send the book id and "1" response to backend
-                // fetch('/books', requestOptions)
-                    // .then(response => response.json())
-                    // .then(data => this.setState({ id: 1, bookid: books[books.length-1], sentiment: 1 }));
+                fetch('localhost:5000/books/1', requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, bookid: books[books.length-1].id, sentiment: 1 }));
+                init_flag.current--;
                     
                 console.log("Read and liked");
                 break;
             case directions.READ_DISLIKE:
                 // send the book id and "0" response to backend
-                // fetch('/books', requestOptions)
-                //     .then(response => response.json())
-                //     .then(data => this.setState({ id: 1, bookid: books[books.length-1], sentiment: 0 }));
+                fetch('localhost:5000/books/1', requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
+                init_flag.current--;
 
                 console.log("Read and disliked");
                 break;
