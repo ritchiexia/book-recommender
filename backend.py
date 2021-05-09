@@ -197,7 +197,7 @@ def improve(swipe, pred, user):
   user.rl_model.optimizer.step()
 
 
-def get_recs(user_id):
+def get_recs(users, user_id):
   #Assuming right now users stored in user-array, may need to change this to accomadate grabbing it from the database
   currUser = users[user_id] #This array needs to be definied on initialization
   recs = currUser.get_books()
@@ -207,12 +207,13 @@ def get_recs(user_id):
     recList.append({"book id":book_id, "book title":title,"author name":author,"url":url})
   return recList
 
-def update_model(user_id, init_flag, sentiments): #sentiments is (book_id,sentiment)
+def update_model(users, user_id, init_flag, sentiments, ratings): #sentiments is (book_id,sentiment)
   if init_flag:
     ratings.append([sentiments[0].sentiments[1]]) #this will need to be stored somewhere for user setup
     if len(ratings) == 20:
       users[user_id] = User(ratings, model_matrix, user_id, emb_dim)
       users.append(0)
+      ratings = []
   else:
     exp_rec = getRec(users[user_id],sentiments[0])
     result = sentiments[1]

@@ -26,6 +26,7 @@ fullMat = create_matrix(model)
 bookMat = create_book_feature_matrix(model)
 
 users = [0] * 10
+users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24)
 user_swipe_args = reqparse.RequestParser()
 user_swipe_args.add_argument("init_flag", type=int, help="init flag is required")
 user_swipe_args.add_argument("book_id", type=int, help="Book id is required")
@@ -42,7 +43,7 @@ def abort_if_id_exists(user_id):
 class Book(Resource):
     def get(self, user_id):
         #abort_if_id_dne(user_id)
-        recs = get_recs(user_id)
+        recs = get_recs(users, user_id)
         return jsonify(jsonify({recs[0]}), jsonify(jsonify({recs[1]})), jsonify(jsonify({recs[2]})), jsonify(jsonify({recs[3]})), jsonify(jsonify({recs[4]})))
 
     def put(self, user_id):
@@ -50,7 +51,7 @@ class Book(Resource):
         args = user_swipe_args.parse_args()
         book_id = args["book_id"]
         sentiment = args["sentiment"]
-        update_model(user_id,args["init_flag"],(book_id,sentiment))
+        update_model(users, user_id,args["init_flag"],(book_id,sentiment))
         return (book_id,sentiment) #not used
 
     def delete(self, user_id):
