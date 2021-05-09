@@ -1,3 +1,8 @@
+/*
+ * General format of header and styling follows this tutorial: https://www.youtube.com/watch?v=DQfeB_FKKkc&t=5317s, but slightly adjusted.
+ * In general we are just copying Tinder's layout
+*/
+
 import React from 'react'
 import './Header.css';
 import BookIcon from '@material-ui/icons/Book';
