@@ -1,3 +1,5 @@
+#Code developped following the following tutorials: "Python MongoDB Tutorial using PyMongo": https://www.youtube.com/watch?v=rE_bJl2GAY8 and ":"Python REST API Tutorial - Buidling a Flask REST API": https://www.youtube.com/watch?v=GMppyAPbLYk
+
 from flask import Flask
 from flask_restful import Api, Resource, reqparse, abort
 from flask import request
@@ -26,6 +28,7 @@ fullMat = create_matrix(model)
 bookMat = create_book_feature_matrix(model)
 
 users = [0] * 10
+ratings = []
 users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24)
 user_swipe_args = reqparse.RequestParser()
 user_swipe_args.add_argument("init_flag", type=int, help="init flag is required")
@@ -51,7 +54,7 @@ class Book(Resource):
         args = user_swipe_args.parse_args()
         book_id = args["book_id"]
         sentiment = args["sentiment"]
-        update_model(users, user_id,args["init_flag"],(book_id,sentiment))
+        update_model(users, user_id,args["init_flag"],(book_id,sentiment),ratings)
         return (book_id,sentiment) #not used
 
     def delete(self, user_id):
