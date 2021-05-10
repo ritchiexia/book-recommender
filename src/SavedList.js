@@ -7,7 +7,17 @@ function SavedList({savedBooks, setSavedBooks}) {
         <div>
             <h1>Saved List</h1>
 
-            <div className="">
+            <div className="SavedList___container">
+                {
+                    savedBooks.map(book => (
+                        <div className="box" key={book.id}>
+                            <div className="entry">
+                                <h3>{book.name}</h3>
+                                <h4>{book.author}</h4>
+                            </div>
+                        </div>
+                    ))
+                }
                 
             </div>
         </div>
