@@ -127,7 +127,7 @@ BoostBatch = 100 #Constant number of books to add to the rec list when needed
 BoostThreshold = RecBatches-BoostBatch
 
 class User ():
-  def __init__(self, ratings, matrix, id, emb_dim):
+  def __init__(self, ratings, matrix, id, emb_dim, model):
     self.id = id
     self.ratings = ratings
     self.pair_id = find_paired_user(ratings, matrix)

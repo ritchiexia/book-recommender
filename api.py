@@ -29,7 +29,7 @@ bookMat = create_book_feature_matrix(model)
 
 users = [0] * 10
 ratings = []
-users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24)
+users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24,model)
 user_swipe_args = reqparse.RequestParser()
 user_swipe_args.add_argument("init_flag", type=int, help="init flag is required")
 user_swipe_args.add_argument("book_id", type=int, help="Book id is required")
