@@ -184,11 +184,12 @@ class RLModel(nn.Module):
   def __init__(self,user_vector, emb_dim):
     super(RLModel, self).__init__()
     self.embedding = nn.Embedding(1,emb_dim)
-    self.embedding.weight = user_vector #may need to mess around with some tensor dimensions
-  def forward(self,input):
-    book_vec = BookFeatureMatrix[input] #created using create_book_feature_matrix
+    self.embedding.weight = torch.nn.Parameter(user_vector) 
+  def forward(self,input, matrix):
+    book_vec = matrix[input] #created using create_book_feature_matrix
     userNum = torch.LongTensor([0])
-    result = torch.dot(self.embedding(userNum), book_vec)
+
+    result = (self.embedding(torch.LongTensor([[0]]))[0] * book_vec.view(1,24)).sum(1)
     return torch.sigmoid(result)
 def getRec(user, book_id, b_matrix):
   user.rl_model.eval()
