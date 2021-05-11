@@ -1,10 +1,10 @@
-import torch, numpy as np
+import torch
+import numpy as np
 import pandas as pd, csv
 from torch import nn, optim
 from tqdm.auto import tqdm
 torch.manual_seed(291)
 np.random.seed(291)
-import pandas as pd
 
 #Code adapted and inspired by movie recommender model in lecture 6
 class Dataset(torch.utils.data.Dataset):
@@ -26,10 +26,13 @@ class Dataset(torch.utils.data.Dataset):
         return len(self.coords)
     
     def get_book_info(self, book_id): #This is wrong
-      return (self.books[self.books["book_id"] == book_id]).loc[:,"original_title"].values[0], (self.books[self.books["book_id"] == book_id]).loc[:,"authors"].values[0], (self.books[self.books["book_id"] == book_id]).loc[:,"image_url"].values[0]
+      title = (self.books[self.books["book_id"] == book_id]).loc[:,"original_title"].values[0]
+      author = (self.books[self.books["book_id"] == book_id]).loc[:,"authors"].values[0]
+      url = (self.books[self.books["book_id"] == book_id]).loc[:,"image_url"].values[0]
+      return title, author, url
 
     def __getitem__(self, i):  
-      return (self.coords[i], self.ratings[i]) 
+      return (self.coords[i], self.ratings[i])  
 #Dataset set up code
 ds_full = Dataset('goodbooks-ratings.csv', 'goodbooks.csv')
 n_train = int(0.8 * len(ds_full))
@@ -38,6 +41,7 @@ rng = torch.Generator().manual_seed(291)
 ds_train, ds_test = torch.utils.data.random_split(ds_full, [n_train, n_test], rng)
 len(ds_full)
 
+#Code adapted and inspired by movie recommender model in lecture 6
 #Code adapted and inspired by movie recommender model in lecture 6
 class BookRecommenderEmbeddingML(nn.Module):
   def __init__(self, n_users, n_books, emb_dim):
@@ -112,7 +116,7 @@ def find_paired_user(ratings, matrix):
   for i in range(ds_full.n_users): # 5 for now but should be ds_full.n_users
     diff = 0
     for rating in ratings:
-      diff = diff + np.abs(matrix[i][rating[0]] - rating[1])#Matrix will be tensor - may need to accomadate if so adjust future uses
+      diff = diff + abs(matrix[i][rating[0]] - rating[1])#Matrix will be tensor - may need to accomadate if so adjust future uses
     if diff < bestDiff:
       bestDiff = diff
       bestUser = i
@@ -128,28 +132,32 @@ class User ():
     self.ratings = ratings
     self.pair_id = find_paired_user(ratings, matrix)
     emb_index = torch.LongTensor([self.pair_id])
-    emb_index = emb_index.to(device) #May need to remove to call
+    #emb_index = emb_index.to(device)
     user_feature_vector = model.user_embedding(emb_index) # get feature vector for user 0
-    row = matrix[self.pair_id].numpy()
+    row = matrix[self.pair_id].detach().numpy()
+    self.to_recommend = []
     for i in range(10000):
-      self.to_recommend[i]= [i, row[i]]
-    self.to_recommend = np.sort(self.to_recommend)[::-1] #Make sure this is sorting to_recommend based on row[i]
-    self.rl_model = RLModel(user_vector, emb_dim)#Need to change RLModel to initialize from a provided vector
-    self.optimizer = optim.SGD(self.rl_model.parameters(),0.01,0.3)
+      self.to_recommend.append([i, row[i]])
+    self.to_recommend = sorted(self.to_recommend, key=lambda x : x[1]) #From https://stackoverflow.com/a/4174956
+    self.to_recommend.reverse()
+    self.rl_model = RLModel(user_feature_vector, emb_dim)
+    self.optimizer = optim.SGD(self.rl_model.parameters(),1,0.3)
     self.curr_rec_list = self.to_recommend[0:RecBatches]
-    self.to_recommend = self.to_recommend[RecBatches:] #Double check for off by one errors
-  def get_books(self):
-    curr_recommendation = self.curr_rec_list[0:NumBooks]
-    self.to_recommend = self.curr_rec_list[NumBooks:] #Double check for off by one errors
-    update_rec_list(self)
-    return curr_recommendation
-  def update_rec_list(self):
+    self.to_recommend = self.to_recommend[RecBatches:]
+  def update_rec_list(self, matrix):
     if len(self.curr_rec_list) < BoostThreshold:
       self.curr_rec_list.append(self.to_recommend[0:BoostBatch])
       self.to_recommend = self.to_recommend[BoostBatch:]
     for i in range(len(self.curr_rec_list)):
-      self.curr_rec_list[i][1] = self.rl_model(self.curr_rec_list[i][0])
-    self.curr_rec_list =  np.sort(self.curr_rec_list)[::-1]
+      self.curr_rec_list[i][1] = getRec(self, self.curr_rec_list[i][0], matrix)
+    self.curr_rec_list =  sorted(self.curr_rec_list, key=lambda x : x[1]) #From https://stackoverflow.com/a/4174956
+    self.curr_rec_list.reverse()
+  def get_books(self, matrix):
+    #pdb.set_trace()
+    curr_recommendation = self.curr_rec_list[0:NumBooks]
+    self.to_recommend = self.curr_rec_list[NumBooks:]
+    self.update_rec_list(matrix)
+    return curr_recommendation
 
 def lossFunction(self, expected, rating): 
   return abs(expected - rating)
@@ -159,7 +167,7 @@ def create_matrix(model):
   #index = index.to(device)
   userMat = model.user_embedding(index)[0]
   index = torch.IntTensor([range(10000)])
- # index = index.to(device)
+  #index = index.to(device)
   old = model.book_embedding(index)[0]
   bookMat = torch.zeros(24,10000)
   for i in range(24):
@@ -182,40 +190,40 @@ class RLModel(nn.Module):
     userNum = torch.LongTensor([0])
     result = torch.dot(self.embedding(userNum), book_vec)
     return torch.sigmoid(result)
-def getRec(user, book_id):
+def getRec(user, book_id, b_matrix):
+  user.rl_model.eval()
+  with torch.no_grad():
+   pred = user.rl_model(book_id, b_matrix)
+  return pred[0].item()
+
+def improve(swipe, book_id, user, b_matrix):
   user.rl_model.train()
   with torch.enable_grad():
-    pred = user.rl_model(book_id)
-    return pred
-
-def improve(swipe, pred, user):
-  user.rl_model.train()
-  user.optimizer.zero_grad()
-  loss = lossFunction
-  improve = loss(pred, swipe)
-  improve.backward()
-  user.rl_model.optimizer.step()
+    user.optimizer.zero_grad()
+    pred = user.rl_model(book_id, b_matrix)
+    loss = nn.MSELoss()
+    improve = loss(pred, torch.FloatTensor([swipe]))
+    improve.backward(retain_graph=True)
+    user.optimizer.step()
 
 
-def get_recs(users, user_id):
+def get_recs(users, user_id, b_matrix):
   #Assuming right now users stored in user-array, may need to change this to accomadate grabbing it from the database
-  currUser = users[user_id] #This array needs to be definied on initialization
-  recs = currUser.get_books()
-  recList = [],
+  currUser = users[user_id]
+  recs = currUser.get_books(b_matrix)
+  recList = []
   for book_id, _ in recs:
     title, author, url = ds_full.get_book_info(book_id)
     recList.append({"book id":book_id, "book title":title,"author name":author,"url":url})
   return recList
 
-def update_model(users, user_id, init_flag, sentiments, ratings): #sentiments is (book_id,sentiment)
+def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b_matrix): #sentiments is (book_id,sentiment)
   if init_flag:
-    ratings.append([sentiments[0].sentiments[1]]) #this will need to be stored somewhere for user setup
+    ratings.append([sentiments[0],sentiments[1]]) 
     if len(ratings) == 20:
       users[user_id] = User(ratings, model_matrix, user_id, emb_dim)
       users.append(0)
       ratings = []
   else:
-    exp_rec = getRec(users[user_id],sentiments[0])
-    result = sentiments[1]
-    improve(result, exp_rec,users[user_id]) 
+    improve(sentiments[1], sentiments[0], users[user_id], b_matrix) 
 
