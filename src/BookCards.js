@@ -14,13 +14,14 @@ const directions = {
 }
 
 function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
-    const refContainer= useRef({current: false});
+    const refContainer = useRef({current: false});
     const currBook = useRef({current: null});
     const init_flag = useRef({current: 20});
 
     useEffect(() => {
-        console.log("Current book stack:", {books});
-        console.log("Top book on stack:", books[books.length-1]);
+        // console.log("Current book stack:", {books});
+        // console.log("Top book on stack:", books[books.length-1]);
+        // console.log("Saved books BEFORE useEffect:", {savedBooks});
 
         // check to see if we add current book to saved list, and if so, do it
         if (refContainer.current) {
@@ -33,7 +34,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                     }
                 }
                 if (!found) {
-                    prevSavedBooks.push(currBook.current)
+                    prevSavedBooks.push(currBook.current);
                 }
                 return prevSavedBooks;
             });
@@ -68,9 +69,9 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
         switch (direction) {
             case directions.LIKE:
                 // send the book id and "1" response to backend
-                fetch('localhost:5000/books/1', requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 }));
+                // fetch('localhost:5000/books/1', requestOptions)
+                //     .then(response => response.json())
+                //     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 }));
                 init_flag.current--;
                 refContainer.current = true;
 

@@ -54,8 +54,6 @@ function App() {
       {
         viewingSaved ? <SavedList savedBooks={savedBooks} setSavedBooks={setSavedBooks}/> : <BookCards books={books} setBooks={setBooks} savedBooks={savedBooks} setSavedBooks={setSavedBooks}/>
       }
-        {/* {Tinder cards} */}
-        {/* {Buttons below Tinder cards} */}
     </div>
   );
 }
