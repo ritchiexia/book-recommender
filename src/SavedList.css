@@ -2,16 +2,18 @@
  * General format of header and styling follows this tutorial: https://www.youtube.com/watch?v=DQfeB_FKKkc&t=5317s, but slightly adjusted.
  * In general we are just copying Tinder's layout
 */
+body {
+    display: flex;
+    flex-direction: column;
+}
 
 .entry {
     position: relative;
-    width: 80vw;
+    width: 40vw;
     padding: 20px;
-    max-width: 85vw;
-    height: 20vh;
-    border-radius: 3px;
-    background-size: cover;
-    background-position: center;
+    min-width: 500px;
+    height: 100px;
+    border-radius: 10px;
     border-style: solid;
     border-width: 3px;
 }
@@ -19,23 +21,31 @@
 .entry > h3 {
     font-size: x-large;
     position: absolute;
-    bottom: 30px;
+    top: 10px;
     color: black;
 }
 
 .entry > h4 {
     font-size: smaller;
     position: absolute;
-    bottom: 10px;
+    top: 50px;
     color: black;
 }
 
 .SavedList___container {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin-top: 5vh;
+    overflow: auto;
+    height: 70vh;
+}
+
+.cover {
+    right: 5px;
+    max-height: 90px;
 }
 
 .box {

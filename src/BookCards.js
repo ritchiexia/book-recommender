@@ -46,7 +46,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
             console.log("Book stack is empty! Fetching more books...");
 
             // call fetch to endpoint to get next 5 BEST recommendations
-            fetch('localhost:5000/books/1').then(res => res.json()).then((value) => {
+            fetch('http://localhost:5000/book/1').then(res => res.json()).then((value) => {
                 // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
                 setBooks(value);
             });
@@ -69,9 +69,9 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
         switch (direction) {
             case directions.LIKE:
                 // send the book id and "1" response to backend
-                // fetch('localhost:5000/books/1', requestOptions)
-                //     .then(response => response.json())
-                //     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 }));
+                fetch('http://localhost:5000/book/1', requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 }));
                 init_flag.current--;
                 refContainer.current = true;
 
@@ -79,7 +79,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 break;
             case directions.DISLIKE:
                 // send the book id and "0" response to backend
-                fetch('localhost:5000/books/1', requestOptions)
+                fetch('http://localhost:5000/book/1', requestOptions)
                     .then(response => response.json())
                     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
                 init_flag.current--;
@@ -88,7 +88,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 break;
             case directions.READ_LIKE:
                 // send the book id and "1" response to backend
-                fetch('localhost:5000/books/1', requestOptions)
+                fetch('http://localhost:5000/book/1', requestOptions)
                     .then(response => response.json())
                     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, bookid: books[books.length-1].id, sentiment: 1 }));
                 init_flag.current--;
@@ -97,7 +97,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 break;
             case directions.READ_DISLIKE:
                 // send the book id and "0" response to backend
-                fetch('localhost:5000/books/1', requestOptions)
+                fetch('http://localhost:5000/book/1', requestOptions)
                     .then(response => response.json())
                     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
                 init_flag.current--;

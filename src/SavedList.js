@@ -14,6 +14,8 @@ function SavedList({savedBooks, setSavedBooks}) {
                             <div className="entry">
                                 <h3>{book.name}</h3>
                                 <h4>{book.author}</h4>
+                                <img className="cover" src={book.url}/>
+                                <img className="cover" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/1200px-Red_X.svg.png"/>
                             </div>
                         </div>
                     ))
