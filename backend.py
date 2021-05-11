@@ -155,7 +155,7 @@ class User ():
   def get_books(self, matrix):
     #pdb.set_trace()
     curr_recommendation = self.curr_rec_list[0:NumBooks]
-    self.to_recommend = self.curr_rec_list[NumBooks:]
+    self.curr_rec_list = self.curr_rec_list[NumBooks:]
     self.update_rec_list(matrix)
     return curr_recommendation
 
