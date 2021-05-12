@@ -35,16 +35,16 @@ users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24,model)
 def get(self, user_id):
     #abort_if_id_dne(user_id)
     recs = get_recs(users, user_id)
-        return jsonify(jsonify({recs[0]}), jsonify(jsonify({recs[1]})), jsonify(jsonify({recs[2]})), jsonify(jsonify({recs[3]})), jsonify(jsonify({recs[4]})))
+    return jsonify(jsonify({recs[0]}), jsonify(jsonify({recs[1]})), jsonify(jsonify({recs[2]})), jsonify(jsonify({recs[3]})), jsonify(jsonify({recs[4]})))
 
-    @app.route("/book/<user_id>", methods=["PUT"])
-    def put(self, user_id):
-        #abort_if_id_dne(user_id)
-        put_json = request.get_json()
-        init_flag = json.loads(put_json)["init_flag"]
-        book_id = json.loads(put_json)["book_id"]
-        sentiment = json.loads(put_json)[["sentiment"]
-        update_model(users, user_id, init_flag, (book_id,sentiment), ratings)
-        return (book_id,sentiment) #not used
+@app.route("/book/<user_id>", methods=["PUT"])
+def put(self, user_id):
+    #abort_if_id_dne(user_id)
+    put_json = request.get_json()
+    init_flag = json.loads(put_json)["init_flag"]
+    book_id = json.loads(put_json)["book_id"]
+    sentiment = json.loads(put_json)["sentiment"]
+    update_model(users, user_id, init_flag, (book_id,sentiment), ratings, fullMat, bookMat)
+    # return (book_id,sentiment) #not used
 
 app.run(debug=True)
