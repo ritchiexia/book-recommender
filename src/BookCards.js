@@ -46,9 +46,10 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
             console.log("Book stack is empty! Fetching more books...");
 
             // call fetch to endpoint to get next 5 BEST recommendations
-            fetch('http://localhost:5000/book/1').then(res => res.json()).then((value) => {
+            fetch('book/1').then(res => res.json()).then((value) => {
                 // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
-                setBooks(value);
+                console.log(value);
+                setBooks([value['one'],value['two'],value['three'],value['four'],value['5']]);
             });
 
         }
@@ -63,15 +64,21 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
     const onCardLeftScreen = (direction) => {
         const requestOptions = {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: 'Sending positive sentiment...' })
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            // body: JSON.stringify(data),
         };
         switch (direction) {
             case directions.LIKE:
+                const data = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 };
                 // send the book id and "1" response to backend
-                fetch('http://localhost:5000/book/1', requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 }));
+                fetch('book/1', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                    // .then(response => response.json())
+                    // .then(data => console.log('Successfully sent json:', data))
+                    // .catch(console.log('Error'));
                 init_flag.current--;
                 refContainer.current = true;
 
@@ -79,7 +86,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 break;
             case directions.DISLIKE:
                 // send the book id and "0" response to backend
-                fetch('http://localhost:5000/book/1', requestOptions)
+                fetch('book/1', requestOptions)
                     .then(response => response.json())
                     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
                 init_flag.current--;
@@ -88,7 +95,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 break;
             case directions.READ_LIKE:
                 // send the book id and "1" response to backend
-                fetch('http://localhost:5000/book/1', requestOptions)
+                fetch('book/1', requestOptions)
                     .then(response => response.json())
                     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, bookid: books[books.length-1].id, sentiment: 1 }));
                 init_flag.current--;
@@ -97,7 +104,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 break;
             case directions.READ_DISLIKE:
                 // send the book id and "0" response to backend
-                fetch('http://localhost:5000/book/1', requestOptions)
+                fetch('book/1', requestOptions)
                     .then(response => response.json())
                     .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
                 init_flag.current--;

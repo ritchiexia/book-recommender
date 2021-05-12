@@ -186,7 +186,7 @@ class RLModel(nn.Module):
     self.embedding = nn.Embedding(1,emb_dim)
     self.embedding.weight = torch.nn.Parameter(user_vector) 
   def forward(self,input, matrix):
-    book_vec = matrix[input] #created using create_book_feature_matrix
+    book_vec = matrix[int(input)] #created using create_book_feature_matrix
     userNum = torch.LongTensor([0])
 
     result = (self.embedding(torch.LongTensor([[0]]))[0] * book_vec.view(1,24)).sum(1)
@@ -210,12 +210,12 @@ def improve(swipe, book_id, user, b_matrix):
 
 def get_recs(users, user_id, b_matrix):
   #Assuming right now users stored in user-array, may need to change this to accomadate grabbing it from the database
-  currUser = users[user_id]
+  currUser = users[int(user_id)]
   recs = currUser.get_books(b_matrix)
   recList = []
   for book_id, _ in recs:
     title, author, url = ds_full.get_book_info(book_id)
-    recList.append({"book id":book_id, "book title":title,"author name":author,"url":url})
+    recList.append({"id":book_id, "name":title,"author":author,"url":url})
   return recList
 
 def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b_matrix): #sentiments is (book_id,sentiment)
@@ -226,5 +226,5 @@ def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b
       users.append(0)
       ratings = []
   else:
-    improve(sentiments[1], sentiments[0], users[user_id], b_matrix) 
+    improve(sentiments[1], sentiments[0], users[int(user_id)], b_matrix) 
 
