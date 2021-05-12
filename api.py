@@ -45,6 +45,7 @@ def put(user_id):
     book_id = put_json["book_id"]
     sentiment = put_json["sentiment"]
     update_model(users, user_id, init_flag, (book_id,sentiment), ratings, fullMat, bookMat)
-    return (book_id,sentiment) #not used
+    return '', 201 #returns empty string ie no return value, and apprporiate status code, 201
+    #return (book_id,sentiment) #not used
 
 app.run(debug=True)
