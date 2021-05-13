@@ -11,7 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 function Header({onViewingSaved}) {
     return (
         <div className="header">
-            <IconButton onClick= {() => onViewingSaved(false)}>
+            <IconButton onClick={() => onViewingSaved(false)}>
             <img className="header__logo"
                 src="https://e7.pngegg.com/pngimages/932/58/png-clipart-centrosaurus-tyrannosaurus-lambeosaurus-pterodactyls-spinosaurus-dinosaur-carnivoran-dog-like-mammal-thumbnail.png"
                 alt="Centrosaurus logo"/>
