@@ -13,8 +13,8 @@ function Header({onViewingSaved}) {
         <div className="header">
             <IconButton onClick={() => onViewingSaved(false)}>
             <img className="header__logo"
-                src="centrosaurus.png"
-                alt="https://image.flaticon.com/icons/png/512/47/47251.png"
+                alt="/centrosaurus.png"
+                src="https://image.flaticon.com/icons/png/512/47/47251.png"
             />
             </IconButton>
 
