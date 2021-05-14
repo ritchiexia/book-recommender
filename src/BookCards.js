@@ -64,11 +64,6 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
     }
 
     const onCardLeftScreen = (direction) => {
-        const requestOptions = {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            // body: JSON.stringify(data),
-        };
         switch (direction) {
             case directions.LIKE:
                 const data = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 };
