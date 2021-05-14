@@ -16,20 +16,31 @@ body {
     border-radius: 10px;
     border-style: solid;
     border-width: 3px;
+    display: flex;
+    flex-direction:row-reverse;
+    text-align: left;
 }
 
-.entry > h3 {
-    font-size: x-large;
-    position: absolute;
-    top: 10px;
+.info {
+    position:absolute;
+    left: 10px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+.info > h3 {
+    font-size: large;
+    position: relative;
+    max-width: 400px;
     color: black;
 }
 
-.entry > h4 {
+.info > h4 {
     font-size: smaller;
-    position: absolute;
-    top: 50px;
-    color: black;
+    position: relative;
+    color: grey;
 }
 
 .SavedList___container {
@@ -44,8 +55,21 @@ body {
 }
 
 .cover {
-    right: 5px;
-    max-height: 90px;
+    right:3%;
+    max-height: 100px;
+    position: relative;
+}
+
+.x {
+    max-height: 15px;
+    max-width: 15px;
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/1200px-Red_X.svg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: transparent;
+    border: none;
+    cursor: pointer;
 }
 
 .box {

@@ -215,7 +215,10 @@ def get_recs(users, user_id, b_matrix):
   recList = []
   for book_id, _ in recs:
     title, author, url = ds_full.get_book_info(book_id)
-    recList.append({"id":book_id, "name":title,"author":author,"url":url})
+    if title != title:
+      recList.append({"id":book_id, "name":"","author":author,"url":url})
+    else:
+      recList.append({"id":book_id, "name":title,"author":author,"url":url})
   return recList
 
 def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b_matrix): #sentiments is (book_id,sentiment)

@@ -14,7 +14,8 @@ function App() {
   
   const [savedBooks, setSavedBooks] = useState([]);
 
-  const [books, setBooks] = useState([{id: '9421', name: 'The Night Sister', url: 'https://images.gr-assets.com/books/1427845722m/24040551.jpg', author: 'Jennifer McMahon'}
+  const [books, setBooks] = useState([
+    {id: '9421', name: 'The Night Sister', url: 'https://images.gr-assets.com/books/1427845722m/24040551.jpg', author: 'Jennifer McMahon'}
     // {
     //     id: '1',
     //     name: 'Test Book Title',
@@ -49,7 +50,6 @@ function App() {
 
   return (
     <div className="App">
-      {/* {HEADER} */}
       <Header onViewingSaved={onViewingSaved}/>
       {
         viewingSaved ? <SavedList savedBooks={savedBooks} setSavedBooks={setSavedBooks}/> : <BookCards books={books} setBooks={setBooks} savedBooks={savedBooks} setSavedBooks={setSavedBooks}/>

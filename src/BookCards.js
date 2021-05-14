@@ -24,7 +24,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
         // console.log("Saved books BEFORE useEffect:", {savedBooks});
 
         // check to see if we add current book to saved list, and if so, do it
-        if (refContainer.current) {
+        if (refContainer.current === true) {
             setSavedBooks((prevSavedBooks) => {
                 var found = false;
                 for (var i = 0; i < prevSavedBooks.length; i++) {
@@ -49,8 +49,10 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
             fetch('book/1').then(res => res.json()).then((value) => {
                 // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
                 console.log(value);
-                setBooks([value['one'],value['two'],value['three'],value['four'],value['5']]);
+                setBooks([value['one'],value['two'],value['three'],value['four'],value['five']]);
             });
+
+            console.log({books});
 
         }
         // FOR TESTING *** REMOVE AFTER DONE
@@ -75,38 +77,44 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify(data)
-                })
-                    // .then(response => response.json())
-                    // .then(data => console.log('Successfully sent json:', data))
-                    // .catch(console.log('Error'));
+                    })
                 init_flag.current--;
                 refContainer.current = true;
 
                 console.log("Liked");
                 break;
             case directions.DISLIKE:
+                const data1 = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 };
                 // send the book id and "0" response to backend
-                fetch('book/1', requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
+                fetch('book/1', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(data1)
+                    })
                 init_flag.current--;
 
                 console.log("Disliked");
                 break;
             case directions.READ_LIKE:
+                const data2 = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 };
                 // send the book id and "1" response to backend
-                fetch('book/1', requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, bookid: books[books.length-1].id, sentiment: 1 }));
+                fetch('book/1', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(data2)
+                    })
                 init_flag.current--;
                     
                 console.log("Read and liked");
                 break;
             case directions.READ_DISLIKE:
+                const data3 = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 };
                 // send the book id and "0" response to backend
-                fetch('book/1', requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.setState({ init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 }));
+                fetch('book/1', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(data3)
+                    })
                 init_flag.current--;
 
                 console.log("Read and disliked");
