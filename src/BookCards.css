@@ -5,10 +5,10 @@
 
 .card {
     position: relative;
-    width: 600px;
+    width: 350px;
     padding: 20px;
     max-width: 85vw;
-    height: 50vh;
+    height: 60vh;
     border-radius: 20px;
     background-size: cover;
     background-position: center;
@@ -20,6 +20,12 @@
     position: absolute;
     bottom: 30px;
     color: white;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 3px;
+    border-radius: 5px;
+    max-width: 335px;
 }
 
 .card > h4 {
@@ -27,6 +33,11 @@
     position: absolute;
     bottom: 10px;
     color: white;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 1px;
+    border-radius: 3px;
 }
 
 .bookCards__cardContainer {

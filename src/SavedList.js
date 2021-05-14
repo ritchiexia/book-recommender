@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, Component} from 'react'
+import React from 'react'
 import './SavedList.css';
 
 function SavedList({savedBooks, setSavedBooks}) {
@@ -14,7 +14,7 @@ function SavedList({savedBooks, setSavedBooks}) {
 
     return (
         <div>
-            <h1>Saved List</h1>
+            <h1>Saved Books</h1>
 
             <div className="SavedList___container">
                 {

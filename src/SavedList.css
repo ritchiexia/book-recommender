@@ -7,6 +7,19 @@ body {
     flex-direction: column;
 }
 
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f142;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(56, 54, 54, 0.37)
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(58, 58, 58);;
+  }
+
 .entry {
     position: relative;
     width: 40vw;
@@ -19,6 +32,7 @@ body {
     display: flex;
     flex-direction:row-reverse;
     text-align: left;
+    margin: auto;
 }
 
 .info {
@@ -44,9 +58,7 @@ body {
 }
 
 .SavedList___container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
+    margin: auto;
     justify-content: center;
     align-items: center;
     margin-top: 5vh;
@@ -55,7 +67,7 @@ body {
 }
 
 .cover {
-    right:3%;
+    right: 3%;
     max-height: 100px;
     position: relative;
 }
@@ -74,4 +86,5 @@ body {
 
 .box {
     position: relative;
+    align-self: center;
 }
