@@ -26,7 +26,7 @@ class Dataset(torch.utils.data.Dataset):
         return len(self.coords)
     
     def get_book_info(self, book_id): #This is wrong
-      title = (self.books[self.books["book_id"] == book_id]).loc[:,"original_title"].values[0]
+      title = (self.books[self.books["book_id"] == book_id]).loc[:,"title"].values[0]
       author = (self.books[self.books["book_id"] == book_id]).loc[:,"authors"].values[0]
       url = (self.books[self.books["book_id"] == book_id]).loc[:,"image_url"].values[0]
       return title, author, url
