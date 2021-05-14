@@ -146,7 +146,6 @@ class User ():
     self.to_recommend = self.to_recommend[RecBatches:]
   def update_rec_list(self, matrix):
     if len(self.curr_rec_list) < BoostThreshold:
-      #pdb.set_trace()
       self.curr_rec_list = self.curr_rec_list + (self.to_recommend[0:BoostBatch])
       self.to_recommend = self.to_recommend[BoostBatch:]
     for i in range(len(self.curr_rec_list)):
