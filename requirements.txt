@@ -1,0 +1,8 @@
+Flask==1.1.2
+Flask-PyMongo==2.3.0
+Flask-RESTful==0.3.8
+numpy==1.20.2
+pandas==1.2.4
+pymongo==2.8.2
+tqdm==4.55.2
+torch==1.8.1+cu102 torchvision==0.9.1+cu102 torchaudio===0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
