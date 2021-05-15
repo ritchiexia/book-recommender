@@ -6,33 +6,41 @@ from tqdm.auto import tqdm
 torch.manual_seed(291)
 np.random.seed(291)
 
+NumBooks = 5 #Constant number of books to recommend per iteration
+RecBatches = 300 #Constant number of books to add to the recommendation list for RL
+BoostBatch = 100 #Constant number of books to add to the rec list when needed
+BoostThreshold = RecBatches-BoostBatch
+NumBooks = 9810
+NumUsers = 53424
+hardcoded = [3,15,18,815,96,4,9,127,14,2458,2738,316,60,5,2992,259,617,237]
+
 #Code adapted and inspired by movie recommender model in lecture 6
-class Dataset(torch.utils.data.Dataset):
-    def __init__(self, fn, books):
-        self.dataframe = pd.read_csv(fn)
-        self.books = pd.read_csv(books)
-        u2n = { u: n for n, u in enumerate(self.dataframe['user_id'].unique()) } 
-        df_book_conv = { m : m-1 for m in self.dataframe['book_id'] } 
-        books_book_conv = {m : m-1 for m in self.books['book_id'] }
-        self.dataframe['user_id'] = self.dataframe['user_id'].apply(lambda u: u2n[u])
-        self.dataframe['book_id'] = self.dataframe['book_id'].apply(lambda m: df_book_conv[m]) #These book id conversion lambda functions may not be properly written
-        self.books['book_id'] = self.books['book_id'].apply(lambda m: books_book_conv[m])
-        self.coords = torch.LongTensor(self.dataframe[['user_id','book_id']].values) # (userId,bookId) <- coordinates
-        self.ratings = torch.FloatTensor(self.dataframe['rating'].values)
-        self.n_users = self.dataframe['user_id'].nunique()
-        self.n_books = self.dataframe['book_id'].nunique()
+#class Dataset(torch.utils.data.Dataset):
+ #   def __init__(self, fn, books):
+ #       self.dataframe = pd.read_csv(fn)
+ #       self.books = pd.read_csv(books)
+ #       u2n = { u: n for n, u in enumerate(self.dataframe['user_id'].unique()) } 
+ #       df_book_conv = { m : m-1 for m in self.dataframe['book_id'] } 
+  #      books_book_conv = {m : m-1 for m in self.books['book_id'] }
+ #       self.dataframe['user_id'] = self.dataframe['user_id'].apply(lambda u: u2n[u])
+  #      self.dataframe['book_id'] = self.dataframe['book_id'].apply(lambda m: df_book_conv[m]) #These book id conversion lambda functions may not be properly written
+ #       self.books['book_id'] = self.books['book_id'].apply(lambda m: books_book_conv[m])
+ #       self.coords = torch.LongTensor(self.dataframe[['user_id','book_id']].values) # (userId,bookId) <- coordinates
+     #   self.ratings = torch.FloatTensor(self.dataframe['rating'].values)
+ #       self.n_users = self.dataframe['user_id'].nunique()
+   #     self.n_books = self.dataframe['book_id'].nunique()
 
-    def __len__(self):
-        return len(self.coords)
+  #  def __len__(self):
+ #       return len(self.coords)
     
-    def get_book_info(self, book_id): #This is wrong
-      title = (self.books[self.books["book_id"] == book_id]).loc[:,"title"].values[0]
-      author = (self.books[self.books["book_id"] == book_id]).loc[:,"authors"].values[0]
-      url = (self.books[self.books["book_id"] == book_id]).loc[:,"image_url"].values[0]
-      return title, author, url
+ #   def get_book_info(self, book_id): #This is wrong
+   #   title = (self.books[self.books["book_id"] == book_id]).loc[:,"title"].values[0]
+  #    author = (self.books[self.books["book_id"] == book_id]).loc[:,"authors"].values[0]
+   #   url = (self.books[self.books["book_id"] == book_id]).loc[:,"image_url"].values[0]
+   #   return title, author, url
 
-    def __getitem__(self, i):  
-      return (self.coords[i], self.ratings[i])  
+  #  def __getitem__(self, i):  
+  #    return (self.coords[i], self.ratings[i])  
 #New Dataset Class Below
 #class Dataset(torch.utils.data.Dataset):
     #def __init__(self, fn):
@@ -55,12 +63,12 @@ class Dataset(torch.utils.data.Dataset):
 
 
 #Dataset set up code
-ds_full = Dataset('goodbooks-ratings.csv', 'goodbooks.csv')
-n_train = int(0.8 * len(ds_full))
-n_test = len(ds_full) - n_train
-rng = torch.Generator().manual_seed(291)
-ds_train, ds_test = torch.utils.data.random_split(ds_full, [n_train, n_test], rng)
-len(ds_full)
+#ds_full = Dataset('goodbooks-ratings.csv', 'goodbooks.csv')
+#n_train = int(0.8 * len(ds_full))
+#n_test = len(ds_full) - n_train
+#rng = torch.Generator().manual_seed(291)
+#ds_train, ds_test = torch.utils.data.random_split(ds_full, [n_train, n_test], rng)
+#len(ds_full)
 
 #Code adapted and inspired by movie recommender model in lecture 6
 #Code adapted and inspired by movie recommender model in lecture 6
@@ -134,7 +142,7 @@ def run_all(model, ldr_train, ldr_test, crit, opt, sched, n_epochs=10):
 def find_paired_user(ratings, matrix):
   bestDiff = np.inf
   bestUser = 0
-  for i in range(ds_full.n_users): # 5 for now but should be ds_full.n_users
+  for i in range(NumUsers): # 5 for now but should be ds_full.n_users
     diff = 0
     for rating in ratings:
       diff = diff + abs(matrix[i][rating[0]] - rating[1])#Matrix will be tensor - may need to accomadate if so adjust future uses
@@ -142,12 +150,7 @@ def find_paired_user(ratings, matrix):
       bestDiff = diff
       bestUser = i
   return bestUser
-NumBooks = 5 #Constant number of books to recommend per iteration
-RecBatches = 300 #Constant number of books to add to the recommendation list for RL
-BoostBatch = 100 #Constant number of books to add to the rec list when needed
-BoostThreshold = RecBatches-BoostBatch
-NumBooks = 10000
-hardcoded = [3,15,18,815,96,4,9,127,14,2458,2738,316,60,5,2992,259,617,237]
+
 class User ():
   def __init__(self, ratings, matrix, id, emb_dim, model):
     self.id = id
@@ -243,6 +246,8 @@ def improve(swipe, book_id, user, b_matrix):
     improve.backward(retain_graph=True)
     user.optimizer.step()
 
+def get_book_data(book_id):
+    return book_collect.find_one({"book_id":book_id})["title"], book_collect.find_one({"book_id":book_id})["authors"], book_collect.find_one({"book_id":book_id})["image_url"]
 
 def get_recs(users, user_id, b_matrix):
   #Assuming right now users stored in user-array, may need to change this to accomadate grabbing it from the database
@@ -250,7 +255,7 @@ def get_recs(users, user_id, b_matrix):
   recs = currUser.get_books(b_matrix)
   recList = []
   for book_id, _ in recs:
-    title, author, url = ds_full.get_book_info(book_id)
+    title, author, url = get_book_data(book_id)
     if title != title:
       recList.append({"id":book_id, "name":"","author":author,"url":url})
     else:

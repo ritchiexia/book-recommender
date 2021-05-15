@@ -22,7 +22,7 @@ db = client["book-recommender"]
 collect = db["user-data"]
 
 #Code for importing model will go here
-load = torch.load('model.pt', map_location=torch.device('cpu'))
+load = torch.load('new-best.pt', map_location=torch.device('cpu'))
 model = load['best-model']
 fullMat = create_matrix(model)
 bookMat = create_book_feature_matrix(model)
