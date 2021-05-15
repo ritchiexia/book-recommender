@@ -146,7 +146,7 @@ NumBooks = 5 #Constant number of books to recommend per iteration
 RecBatches = 300 #Constant number of books to add to the recommendation list for RL
 BoostBatch = 100 #Constant number of books to add to the rec list when needed
 BoostThreshold = RecBatches-BoostBatch
-
+hardcoded = [3,15,18,815,96,4,9,127,14,2458,2738,316,60,5,2992,259,617,237]
 class User ():
   def __init__(self, ratings, matrix, id, emb_dim, model):
     self.id = id
@@ -177,6 +177,20 @@ class User ():
     #pdb.set_trace()
     curr_recommendation = self.curr_rec_list[0:NumBooks]
     self.curr_rec_list = self.curr_rec_list[NumBooks:]
+    #This code checks against hardcoded intialization books
+    
+    while len(hardcoded): #as long as there are still entries in hardcoded we need to check
+      toCheck = curr_recommendation #toCheck used to avoid modifying curr_recommendation as we loop through it
+      goodToGo = True #This get set to false, when we bring in a new book, meaning we need to loop through the books again
+      for entry in toCheck:
+        if entry[0] in hardcoded:
+          goodToGo = False
+          curr_recommendation.remove(entry)
+          hardcoded.remove(entry[0]) #we no longer what to check this value
+          curr_recommendation.append(self.curr_rec_list[0])
+          self.curr_rec_list = self.curr_rec_list[1:]
+      if goodToGo:
+        break
     self.update_rec_list(matrix)
     return curr_recommendation
 
