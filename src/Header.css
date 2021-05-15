@@ -13,6 +13,7 @@
 .header__logo {
     height: 60px;
     object-fit: contain;
+    opacity: 0.55;
 }
 
 .header__icon {
