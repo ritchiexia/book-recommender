@@ -99,7 +99,7 @@
 {
     id: 2992
     name: "The Lottery"
-    url: "https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d6..."
+    url: "https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png"
     author: "Shirley Jackson"
 
 }
@@ -120,7 +120,7 @@
 {
     id: 237
     name: "Augusten Burroughs"
-    url: "https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d6..."
+    url: "https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png"
     author: "Running with Scissors"
 
 }
