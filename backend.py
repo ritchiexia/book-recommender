@@ -7,32 +7,48 @@ torch.manual_seed(291)
 np.random.seed(291)
 
 #Code adapted and inspired by movie recommender model in lecture 6
+#class Dataset(torch.utils.data.Dataset):
+    #def __init__(self, fn, books):
+#        self.dataframe = pd.read_csv(fn)
+ #       self.books = pd.read_csv(books)
+  #      u2n = { u: n for n, u in enumerate(self.dataframe['user_id'].unique()) } 
+   #     df_book_conv = { m : m-1 for m in self.dataframe['book_id'] } 
+    #    books_book_conv = {m : m-1 for m in self.books['book_id'] }
+#        self.dataframe['user_id'] = self.dataframe['user_id'].apply(lambda u: u2n[u])
+#        self.dataframe['book_id'] = self.dataframe['book_id'].apply(lambda m: df_book_conv[m]) #These book id conversion lambda functions may not be properly written
+#        self.books['book_id'] = self.books['book_id'].apply(lambda m: books_book_conv[m])
+#        self.coords = torch.LongTensor(self.dataframe[['user_id','book_id']].values) # (userId,bookId) <- coordinates
+#        self.ratings = torch.FloatTensor(self.dataframe['rating'].values)
+#        self.n_users = self.dataframe['user_id'].nunique()
+#        self.n_books = self.dataframe['book_id'].nunique()
+#
+#    def __len__(self):
+#        return len(self.coords)
+#    
+#    def get_book_info(self, book_id): #This is wrong
+#      title = (self.books[self.books["book_id"] == book_id]).loc[:,"title"].values[0]
+#      author = (self.books[self.books["book_id"] == book_id]).loc[:,"authors"].values[0]
+#      url = (self.books[self.books["book_id"] == book_id]).loc[:,"image_url"].values[0]
+#      return title, author, url
+#
+#    def __getitem__(self, i):  
+#      return (self.coords[i], self.ratings[i])  
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, fn, books):
-        self.dataframe = pd.read_csv(fn)
-        self.books = pd.read_csv(books)
-        u2n = { u: n for n, u in enumerate(self.dataframe['user_id'].unique()) } 
-        df_book_conv = { m : m-1 for m in self.dataframe['book_id'] } 
-        books_book_conv = {m : m-1 for m in self.books['book_id'] }
-        self.dataframe['user_id'] = self.dataframe['user_id'].apply(lambda u: u2n[u])
-        self.dataframe['book_id'] = self.dataframe['book_id'].apply(lambda m: df_book_conv[m]) #These book id conversion lambda functions may not be properly written
-        self.books['book_id'] = self.books['book_id'].apply(lambda m: books_book_conv[m])
-        self.coords = torch.LongTensor(self.dataframe[['user_id','book_id']].values) # (userId,bookId) <- coordinates
+    def __init__(self, fn):
+        self.dataframe = pd.read_csc(fn)
+        apply_conv = { m: conv_arr[m] for m in self.dataframe["book_id"] }
+        self.dataframe = self.dataframe["book_id"].apply(lambda m: apply_conv[m])
+        self.dataframe = self.dataframe[self.dataframe["book_id"] != -1]
+        self.coords = torch.LongTensor(self.dataframe[['user_id', 'book_id']].values)
         self.ratings = torch.FloatTensor(self.dataframe['rating'].values)
         self.n_users = self.dataframe['user_id'].nunique()
-        self.n_books = self.dataframe['book_id'].nunique()
-
+        self.n_boooks = self.dataframe['book_id'].nuniquie()
+    
     def __len__(self):
         return len(self.coords)
-    
-    def get_book_info(self, book_id): #This is wrong
-      title = (self.books[self.books["book_id"] == book_id]).loc[:,"title"].values[0]
-      author = (self.books[self.books["book_id"] == book_id]).loc[:,"authors"].values[0]
-      url = (self.books[self.books["book_id"] == book_id]).loc[:,"image_url"].values[0]
-      return title, author, url
 
-    def __getitem__(self, i):  
-      return (self.coords[i], self.ratings[i])  
+    def __getitem__(self, i):
+        return (self.coords[i], self.ratings[i])
 #Dataset set up code
 ds_full = Dataset('goodbooks-ratings.csv', 'goodbooks.csv')
 n_train = int(0.8 * len(ds_full))
