@@ -24,16 +24,13 @@ foreign.append(books["language_code"].unique()[4])
 #iterate through foreign languages keeping only books that aren't in that language
 for lang in foreign:
     books = books[books["language_code"] != lang]
-
-book_conv = { m : m-1 for m in books['book_id'] }
-books['book_id'] = books['book_id'].apply(lambda m: book_conv[m]) 
-
-conv_arr = [-1] * 10001
 count = 0
-#iterate through remaining books to create mapping for dataset class
-for id in books["book_id"]:
-    conv_arr[id] = count
-    count = count + 1
+conv_arr = [-1] * 10001
+for entry in books['book_id']:
+  conv_arr[entry] = count
+  count = count + 1
+book_conv = {m : conv_arr[m] for m in books['book_id']}
+books['book_id'] = books['book_id'].apply(lambda m: book_conv[m]) 
 #Remove unneccessary columns for Mongo Upload
 books.drop("goodreads_book_id", inplace=True, axis=1)
 books.drop("best_book_id", inplace=True, axis=1)
