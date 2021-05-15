@@ -127,7 +127,7 @@ def run_train(model, ldr, crit, opt, sched):
         total_count += labels.size(0)
         tq_iters.set_postfix({'loss': total_loss/total_count}, refresh=True)
     return total_loss / total_count
-
+##
 def run_all(model, ldr_train, ldr_test, crit, opt, sched, n_epochs=10):
     best_loss = np.inf
     tq_epochs = tqdm(range(n_epochs), desc='epochs', unit='ep')
@@ -182,19 +182,20 @@ class User ():
     curr_recommendation = self.curr_rec_list[0:NumBooks]
     self.curr_rec_list = self.curr_rec_list[NumBooks:]
     #This code checks against hardcoded intialization books
-    
-    while len(hardcoded): #as long as there are still entries in hardcoded we need to check
-      toCheck = curr_recommendation #toCheck used to avoid modifying curr_recommendation as we loop through it
-      goodToGo = True #This get set to false, when we bring in a new book, meaning we need to loop through the books again
-      for entry in toCheck:
-        if entry[0] in hardcoded:
-          goodToGo = False
-          curr_recommendation.remove(entry)
-          hardcoded.remove(entry[0]) #we no longer what to check this value
-          curr_recommendation.append(self.curr_rec_list[0])
-          self.curr_rec_list = self.curr_rec_list[1:]
-      if goodToGo:
-        break
+    #stay = True
+    #while stay and len(hardcoded): #as long as there are still entries in hardcoded we need to check
+     # toCheck = curr_recommendation #toCheck used to avoid modifying curr_recommendation as we loop through it
+     # goodToGo = True #This get set to false, when we bring in a new book, meaning we need to loop through the books again
+     # for entry in toCheck:
+     #   if entry[0] in hardcoded:
+     #     goodToGo = False
+    #      curr_recommendation.remove(entry)#
+    #      hardcoded.remove(entry[0]) #we no longer what to check this value
+    #      curr_recommendation.append(self.curr_rec_list[0])
+   #       self.curr_rec_list = self.curr_rec_list[1:]
+   #       self.update_rec_list(matrix)
+   #   if goodToGo:
+  #      stay = False
     self.update_rec_list(matrix)
     return curr_recommendation
 
@@ -244,27 +245,37 @@ def improve(swipe, book_id, user, b_matrix):
     loss = nn.MSELoss()
     improve = loss(pred, torch.FloatTensor([swipe]))
     improve.backward(retain_graph=True)
-    user.optimizer.step()
+    user.optimizer.step()#
 
-def get_book_data(book_id):
-    return book_collect.find_one({"book_id":book_id})["title"], book_collect.find_one({"book_id":book_id})["authors"], book_collect.find_one({"book_id":book_id})["image_url"]
+def get_book_data(book_id, collection):
+    #print(collection.find_one({"book_id" :book_id})["title"])
+    #print(type(book_id))
+    return collection.find_one({"book_id":book_id})["title"], collection.find_one({"book_id":book_id})["authors"], collection.find_one({"book_id":book_id})["image_url"]
 
-def get_recs(users, user_id, b_matrix):
+def get_recs(users, user_id, b_matrix, collection):
   #Assuming right now users stored in user-array, may need to change this to accomadate grabbing it from the database
   currUser = users[int(user_id)]
   recs = currUser.get_books(b_matrix)
+  #print(recs)
   recList = []
   for book_id, _ in recs:
-    title, author, url = get_book_data(book_id)
+    #print(book_id)
+    title, author, url = get_book_data(book_id, collection)
+    #print(title)
+    #print(author)
+    #print(url)
     if title != title:
+      #print("uh-oh")
       recList.append({"id":book_id, "name":"","author":author,"url":url})
     else:
+      #print("we good")
       recList.append({"id":book_id, "name":title,"author":author,"url":url})
+  #print(recList[0])
   return recList
 
 def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b_matrix): #sentiments is (book_id,sentiment)
   if init_flag:
-    ratings.append([sentiments[0],sentiments[1]]) 
+    ratings.append([sentiments[0],5*sentiments[1]]) 
     if len(ratings) == 20:
       users[user_id] = User(ratings, model_matrix, user_id, emb_dim)
       users.append(0)
@@ -272,3 +283,4 @@ def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b
   else:
     improve(sentiments[1], sentiments[0], users[int(user_id)], b_matrix) 
 
+#

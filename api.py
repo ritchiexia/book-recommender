@@ -19,7 +19,7 @@ mongo = PyMongo(app)
 
 client = pymongo.MongoClient("mongodb+srv://dbUser:cpen291@cluster0.02dfd.mongodb.net/book-recommender?retryWrites=true&w=majority")
 db = client["book-recommender"]
-collect = db["user-data"]
+collect = db["book-data"]
 
 #Code for importing model will go here
 load = torch.load('new-best.pt', map_location=torch.device('cpu'))
@@ -34,7 +34,7 @@ users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24,model)
 @app.route("/book/<user_id>", methods=["GET"])
 def get(user_id):
     #abort_if_id_dne(user_id)
-    recs = get_recs(users, user_id, bookMat)
+    recs = get_recs(users, user_id, bookMat, collect)
     return jsonify({'one':recs[0],'two':recs[1],'three':recs[2],'four':recs[3],'five':recs[4]})
 
 @app.route("/book/<user_id>", methods=["PUT"])
