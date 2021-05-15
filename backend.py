@@ -146,6 +146,7 @@ NumBooks = 5 #Constant number of books to recommend per iteration
 RecBatches = 300 #Constant number of books to add to the recommendation list for RL
 BoostBatch = 100 #Constant number of books to add to the rec list when needed
 BoostThreshold = RecBatches-BoostBatch
+NumBooks = 10000
 hardcoded = [3,15,18,815,96,4,9,127,14,2458,2738,316,60,5,2992,259,617,237]
 class User ():
   def __init__(self, ratings, matrix, id, emb_dim, model):
@@ -157,7 +158,7 @@ class User ():
     user_feature_vector = model.user_embedding(emb_index) # get feature vector for user 0
     row = matrix[self.pair_id].detach().numpy()
     self.to_recommend = []
-    for i in range(10000):
+    for i in range(NumBooks):
       self.to_recommend.append([i, row[i]])
     self.to_recommend = sorted(self.to_recommend, key=lambda x : x[1]) #From https://stackoverflow.com/a/4174956
     self.to_recommend.reverse()
@@ -201,10 +202,10 @@ def create_matrix(model):
   index = torch.IntTensor([range(53424)])
   #index = index.to(device)
   userMat = model.user_embedding(index)[0]
-  index = torch.IntTensor([range(10000)])
+  index = torch.IntTensor([range(NumBooks)])
   #index = index.to(device)
   old = model.book_embedding(index)[0]
-  bookMat = torch.zeros(24,10000)
+  bookMat = torch.zeros(24,NumBooks)
   for i in range(24):
     bookMat[i] = torch.narrow(old,1,i,1).flatten()
   #bookMat = bookMat.to(device)
@@ -212,7 +213,7 @@ def create_matrix(model):
   return torch.sigmoid(result)*5.5
 
 def create_book_feature_matrix(model):
-    index = torch.IntTensor([range(10000)])
+    index = torch.IntTensor([range(NumBooks)])
     return model.book_embedding(index)[0]
 
 class RLModel(nn.Module):
