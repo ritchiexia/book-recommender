@@ -43,20 +43,12 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
 
         // check to see if card stack is empty
         if (books.length === 0) {
-            console.log("Book stack is empty! Fetching more books...");
-
             // call fetch to endpoint to get next 5 BEST recommendations
             fetch('book/1').then(res => res.json()).then((value) => {
                 // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
-                console.log(value);
                 setBooks([value['one'],value['two'],value['three'],value['four'],value['five']]);
             });
-
-            console.log({books});
-
         }
-        // FOR TESTING *** REMOVE AFTER DONE
-        console.log("Currently saved books:", {savedBooks});
     });
 
     const onSwipe = (direction) => {

@@ -13,8 +13,9 @@ function Header({onViewingSaved}) {
         <div className="header">
             <IconButton onClick={() => onViewingSaved(false)}>
             <img className="header__logo"
-                src="https://e7.pngegg.com/pngimages/932/58/png-clipart-centrosaurus-tyrannosaurus-lambeosaurus-pterodactyls-spinosaurus-dinosaur-carnivoran-dog-like-mammal-thumbnail.png"
-                alt="Centrosaurus logo"/>
+                alt="/centrosaurus.png"
+                src="https://image.flaticon.com/icons/png/512/47/47251.png"
+            />
             </IconButton>
 
             <IconButton onClick={() => onViewingSaved(true)}>
