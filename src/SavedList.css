@@ -7,6 +7,11 @@ body {
     flex-direction: column;
 }
 
+h1 {
+    font-family: "Source Sans Pro", sans-serif;
+    color: rgb(56, 56, 56);
+}
+
 ::-webkit-scrollbar {
     width: 10px;
   }
