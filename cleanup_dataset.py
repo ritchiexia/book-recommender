@@ -2,9 +2,20 @@ import pandas as pd
 import torch
 import numpy as np
 from torch import nn, optim
+from flask import Flask
+from flask_restful import Api, Resource, reqparse, abort
+from flask import request
+from flask import jsonify
+from flask_pymongo import PyMongo
+import pymongo
+from pymongo import MongoClient
+app = Flask(__name__)
+app.config["MONGO_DBNAME"] = 'bookuser-db'
+app.config["MONGO_URI"] = "mongodb+srv://dbUser:cpen291@cluster0.02dfd.mongodb.net/book-recommender?retryWrites=true&w=majority"
+mongo = PyMongo(app)
 
 bookFP = "goodbooks.csv"
-ratingFP = "goodbookd-ratings.csv"
+ratingFP = "goodbooks-ratings.csv"
 
 books = pd.read_csv(bookFP)
 #Compile all non-english languages - indices determined by inspection
@@ -32,7 +43,7 @@ books.drop("language_code", inplace=True, axis=1)
 books.drop("average_rating", inplace=True, axis=1)
 books.drop("ratings_count", inplace=True, axis=1)
 books.drop("work_ratings_count", inplace=True, axis=1)
-books.drop("works_text_reviews_count", inplace=True, axis=1)
+books.drop("work_text_reviews_count", inplace=True, axis=1)
 books.drop("ratings_1", inplace=True, axis=1)
 books.drop("ratings_2", inplace=True, axis=1)
 books.drop("ratings_3", inplace=True, axis=1)
@@ -41,13 +52,18 @@ books.drop("ratings_5", inplace=True, axis=1)
 books.drop("small_image_url", inplace=True, axis=1)
 #Code to upload books to Mongo goes below
 #Code to upload books to Mongo goes above
-
+books_dict = books.to_dict('records')
+client = pymongo.MongoClient("mongodb+srv://dbUser:cpen291@cluster0.02dfd.mongodb.net/book-recommender?retryWrites=true&w=majority")
+db = client["book-recommender"]
+book_collect = db["book-data"]
+book_collect.insert_many(books_dict, ordered=False)
 
 #Not sure if the below code should stay here or be elsewhere. We will need wherever we train our models. Not sure if we need it in the backnd anymore, now that book info
 #is in Mongo.
+
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, fn):
-        self.dataframe = pd.read_csc(fn)
+        self.dataframe = pd.read_csv(fn)
         apply_conv = { m: conv_arr[m] for m in self.dataframe["book_id"] }
         self.dataframe = self.dataframe["book_id"].apply(lambda m: apply_conv[m])
         self.dataframe = self.dataframe[self.dataframe["book_id"] != -1]
