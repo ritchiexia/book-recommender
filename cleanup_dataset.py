@@ -58,6 +58,8 @@ client = pymongo.MongoClient("mongodb+srv://dbUser:cpen291@cluster0.02dfd.mongod
 db = client["book-recommender"]
 book_collect = db["book-data"]
 book_collect.insert_many(books_dict, ordered=False)
+def get_book_data(book_id):
+    return book_collect.find_one({"book_id":book_id})["title"], book_collect.find_one({"book_id":book_id})["authors"], book_collect.find_one({"book_id":book_id})["image_url"]
 
 #Not sure if the below code should stay here or be elsewhere. We will need wherever we train our models. Not sure if we need it in the backnd anymore, now that book info
 #is in Mongo.
