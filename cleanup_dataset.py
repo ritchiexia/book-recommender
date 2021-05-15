@@ -64,13 +64,15 @@ book_collect.insert_many(books_dict, ordered=False)
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, fn):
         self.dataframe = pd.read_csv(fn)
+        u2n = { u: n for n, u in enumerate(self.dataframe['user_id'].unique()) } 
         apply_conv = { m: conv_arr[m] for m in self.dataframe["book_id"] }
-        self.dataframe = self.dataframe["book_id"].apply(lambda m: apply_conv[m])
+        self.dataframe['user_id'] = self.dataframe['user_id'].apply(lambda u: u2n[u])
+        self.dataframe["book_id"] = self.dataframe["book_id"].apply(lambda m: apply_conv[m])
         self.dataframe = self.dataframe[self.dataframe["book_id"] != -1]
         self.coords = torch.LongTensor(self.dataframe[['user_id', 'book_id']].values)
         self.ratings = torch.FloatTensor(self.dataframe['rating'].values)
         self.n_users = self.dataframe['user_id'].nunique()
-        self.n_boooks = self.dataframe['book_id'].nuniquie()
+        self.n_boooks = self.dataframe['book_id'].nunique()
     
     def __len__(self):
         return len(self.coords)
@@ -78,7 +80,10 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(self, i):
         return (self.coords[i], self.ratings[i])
 
+
 ds = Dataset(ratingFP)
 
 torch.save({
     'ds' : ds}, "ds.pt")
+
+app.run(debug=True)
