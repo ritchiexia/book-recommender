@@ -19,10 +19,10 @@ mongo = PyMongo(app)
 
 client = pymongo.MongoClient("mongodb+srv://dbUser:cpen291@cluster0.02dfd.mongodb.net/book-recommender?retryWrites=true&w=majority")
 db = client["book-recommender"]
-collect = db["book-data"]
+collect = db["final-book-data"]
 
 #Code for importing model will go here
-load = torch.load('new-best.pt', map_location=torch.device('cpu'))
+load = torch.load('new-best-1.pt', map_location=torch.device('cpu'))
 model = load['best-model']
 fullMat = create_matrix(model)
 bookMat = create_book_feature_matrix(model)
