@@ -16,7 +16,8 @@ const directions = {
 function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
     const refContainer = useRef({current: false});
     const currBook = useRef({current: null});
-    const init_flag = useRef({current: 20});
+    const init_flag = useRef(18);
+    const pause = useRef(1)
 
     useEffect(() => {
         // console.log("Current book stack:", {books});
@@ -43,7 +44,12 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
 
         // check to see if card stack is empty
         if (books.length === 0) {
+           // console.log("let's wait to fetch")
             // call fetch to endpoint to get next 5 BEST recommendations
+            //while(init_flag.current === 0 && pause.current === 1){
+            //   setTimeout(()=>{console.log(pause.current--)}, 20000)
+           // }
+            //console.log("I'm done waiting")
             fetch('book/1').then(res => res.json()).then((value) => {
                 // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
                 setBooks([value['one'],value['two'],value['three'],value['four'],value['five']]);

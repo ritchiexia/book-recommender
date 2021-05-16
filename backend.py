@@ -149,6 +149,7 @@ def find_paired_user(ratings, matrix):
     if diff < bestDiff:
       bestDiff = diff
       bestUser = i
+  print(bestUser)
   return bestUser
 
 class User ():
@@ -273,14 +274,18 @@ def get_recs(users, user_id, b_matrix, collection):
   #print(recList[0])
   return recList
 
-def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b_matrix): #sentiments is (book_id,sentiment)
+def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b_matrix, model): #sentiments is (book_id,sentiment)
+  print(init_flag)
+  print(type(user_id))
   if init_flag:
-    ratings.append([sentiments[0],5*sentiments[1]]) 
-    if len(ratings) == 20:
-      users[user_id] = User(ratings, model_matrix, user_id, emb_dim)
+    ratings.append([sentiments[0],5*sentiments[1]])
+    #print(init_flag)
+    print(len(ratings)) 
+    if len(ratings) == 6:
+      users[int(user_id)] = User(ratings, model_matrix, int(user_id), 24, model)
       users.append(0)
       ratings = []
   else:
     improve(sentiments[1], sentiments[0], users[int(user_id)], b_matrix) 
 
-#
+######

@@ -29,7 +29,7 @@ bookMat = create_book_feature_matrix(model)
 
 users = [0] * 10
 ratings = []
-users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24,model)
+#users[1] = User([[1,1],[2,3],[3,4],[5,5],[6,3]],fullMat,1,24,model)
 
 @app.route("/book/<user_id>", methods=["GET"])
 def get(user_id):
@@ -44,8 +44,8 @@ def put(user_id):
     init_flag = put_json["init_flag"]
     book_id = put_json["book_id"]
     sentiment = put_json["sentiment"]
-    update_model(users, user_id, init_flag, (book_id,sentiment), ratings, fullMat, bookMat)
+    update_model(users, user_id, init_flag, (book_id,sentiment), ratings, fullMat, bookMat, model)
     return '', 201 #returns empty string ie no return value, and apprporiate status code, 201
     #return (book_id,sentiment) #not used
 
-app.run(debug=True)
+app.run(debug=True)##
