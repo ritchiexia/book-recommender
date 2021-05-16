@@ -10,7 +10,7 @@ NumBooks = 5 #Constant number of books to recommend per iteration
 RecBatches = 300 #Constant number of books to add to the recommendation list for RL
 BoostBatch = 100 #Constant number of books to add to the rec list when needed
 BoostThreshold = RecBatches-BoostBatch
-TotalNumBooks = 9810
+TotalNumBooks = 9809
 NumUsers = 53424
 hardcoded = [3,15,18,815,96,4,9,127,14,2458,2738,316,60,5,2992,259,617,237]
 
