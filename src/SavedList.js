@@ -3,8 +3,13 @@ import './SavedList.css';
 
 function SavedList({savedBooks, setSavedBooks}) {
 
+    /**
+     * Removes a given book from the user's SavedList
+     * @param {*} book: the book to be removed
+     */
     const removeBook = (book) => {
         var array = savedBooks;
+        // make sure the book is in the list already
         var idx = array.findIndex((element) => element.id === book.id);
         if (idx !== -1) {
             array.splice(idx, 1);
