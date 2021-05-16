@@ -270,7 +270,7 @@ def get_recs(users, user_id, b_matrix, collection):
       recList.append({"id":book_id, "name":"","author":author,"url":url})
     else:
       #print("we good")
-      recList.append({"id":book_id, "name":title,"author":author,"url":url, "init_flag" : 0})
+      recList.append({"id":book_id, "name":title,"author":author,"url":url})
   #print(recList[0])
   return recList
 
