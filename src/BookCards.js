@@ -16,15 +16,16 @@ const directions = {
 function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
     const refContainer = useRef({current: false});
     const currBook = useRef({current: null});
-    const init_flag = useRef(18);
+    const checkBook = useRef({current: books[0]});
 
     useEffect(() => {
         // console.log("Current book stack:", {books});
         // console.log("Top book on stack:", books[books.length-1]);
-        // console.log("Saved books BEFORE useEffect:", {savedBooks});
+        console.log("Saved books:", {savedBooks});
 
         // check to see if we add current book to saved list, and if so, do it
-        if (refContainer.current === true) {
+        if (refContainer.current === true && parseInt(currBook.current.init_flag) !== 1) {
+            console.log('made it into if statemetn');
             setSavedBooks((prevSavedBooks) => {
                 var found = false;
                 for (var i = 0; i < prevSavedBooks.length; i++) {
@@ -52,6 +53,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
             fetch('book/1').then(res => res.json()).then((value) => {
                 // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
                 setBooks([value['one'],value['two'],value['three'],value['four'],value['five']]);
+                checkBook.current = value['five'];
             });
         }
     });
@@ -63,67 +65,76 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
     const onCardLeftScreen = (direction) => {
         switch (direction) {
             case directions.LIKE:
-                const data = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 };
+                const data = { init_flag: (checkBook.current.init_flag == null) ? 0 : 1, book_id: checkBook.current.id, sentiment: 1 };
                 // send the book id and "1" response to backend
-                fetch('book/1', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify(data)
-                    }).then(res => res.json()).then((value) => {
-                        if(value['alert'] === 1){
-                            alert("You have been matched! Swipe away!")
-                        }
+                if (checkBook.current.id > 0) {
+                    console.log('fetching:', checkBook.current.id);
+                    fetch('book/1', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(data)
+                        }).then(res => res.json()).then((value) => {
+                            if(value['alert'] === 1){
+                                alert("You have been matched! Swipe away!")
+                            }
                     })
-                init_flag.current--;
+                }
                 refContainer.current = true;
 
                 console.log("Liked");
                 break;
             case directions.DISLIKE:
-                const data1 = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 };
+                const data1 = { init_flag: (checkBook.current.init_flag == null) ? 0 : 1, book_id: checkBook.current.id, sentiment: 0 };
                 // send the book id and "0" response to backend
-                fetch('book/1', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify(data1)
-                    }).then(res => res.json()).then((value) => {
-                        if(value['alert'] === 1){
-                            alert("You have been matched! Swipe away!")
-                        }
-                    })
-                init_flag.current--;
+                console.log('CheckBook id:', checkBook.current.id);
+                if (checkBook.current.id > 0) {
+                    console.log('fetching:', checkBook.current.id);
+                    fetch('book/1', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(data1)
+                        }).then(res => res.json()).then((value) => {
+                            if(value['alert'] === 1){
+                                alert("You have been matched! Swipe away!")
+                            }
+                        })
+                }
 
                 console.log("Disliked");
                 break;
             case directions.READ_LIKE:
-                const data2 = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 1 };
+                const data2 = { init_flag: (checkBook.current.init_flag == null) ? 0 : 1, book_id: checkBook.current.id, sentiment: 1 };
                 // send the book id and "1" response to backend
-                fetch('book/1', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify(data2)
-                    }).then(res => res.json()).then((value) => {
-                        if(value['alert'] === 1){
-                            alert("You have been matched! Swipe away!")
-                        }
-                    })
-                init_flag.current--;
+                if (checkBook.current.id > 0) {
+                    console.log('fetching:', checkBook.current.id);
+                    fetch('book/1', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(data2)
+                        }).then(res => res.json()).then((value) => {
+                            if(value['alert'] === 1){
+                                alert("You have been matched! Swipe away!")
+                            }
+                        })
+                }
                     
                 console.log("Read and liked");
                 break;
             case directions.READ_DISLIKE:
-                const data3 = { init_flag: (init_flag.current > 0) ? 1 : 0, book_id: books[books.length-1].id, sentiment: 0 };
+                const data3 = { init_flag: (checkBook.current.init_flag == null) ? 0 : 1, book_id: checkBook.current.id, sentiment: 0 };
                 // send the book id and "0" response to backend
-                fetch('book/1', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify(data3)
-                    }).then(res => res.json()).then((value) => {
-                        if(value['alert'] === 1){
-                            alert("You have been matched! Swipe away!")
-                        }
-                    })
-                init_flag.current--;
+                if (checkBook.current.id > 0) {
+                    console.log('fetching:', checkBook.current.id);
+                    fetch('book/1', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(data3)
+                        }).then(res => res.json()).then((value) => {
+                            if(value['alert'] === 1){
+                                alert("You have been matched! Swipe away!")
+                            }
+                        })
+                }
 
                 console.log("Read and disliked");
                 break;
@@ -135,13 +146,16 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
         // remove currBook from the card stack
         setBooks((previousBooks) => {
             currBook.current = previousBooks[previousBooks.length-1];
+            if (previousBooks.length > 1) {
+                checkBook.current = previousBooks[previousBooks.length-2];
+            }
             return previousBooks.slice(0, previousBooks.length-1);
         })
     }
 
     return (
         <div>
-            <h1>Book Cards</h1>
+            <h1>BookCards</h1>
 
             <div className="bookCards__cardContainer">
                 {books.map(book => (
