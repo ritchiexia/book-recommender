@@ -282,7 +282,7 @@ def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b
     ratings.append([sentiments[0],5*sentiments[1]])
     #print(init_flag)
     print(len(ratings)) 
-    if len(ratings) == 17:
+    if len(ratings) == 18:
       returnBool = True
       users[int(user_id)] = User(ratings, model_matrix, int(user_id), 24, model)
       users.append(0)
