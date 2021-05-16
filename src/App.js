@@ -5,17 +5,23 @@ import BookCards from './BookCards';
 import SavedList from './SavedList';
 
 function App() {
-
+  
+  // boolean to determine which page to display
   const [viewingSaved, setViewingSaved] = useState(false);
 
+  // function to toggle the above boolean and switch between BookCards and SavedList
+  /**
+   * Sets the boolean state that controls what to display on the web page
+   * @param {*} isViewing: true -> view SavedList, false -> view BookCards
+   */
   const onViewingSaved = (isViewing) => {
     setViewingSaved(isViewing);
   }
   
+  // initialize empty list for user's saved books
   const [savedBooks, setSavedBooks] = useState([]);
 
-  const [init_flag, setInit_flag] = useState(20);
-
+  // initialize the BookCards stack with the 18 set starter books
   const [books, setBooks] = useState([ 
     {
       id: -2,
@@ -162,8 +168,9 @@ function App() {
   return (
     <div className="App">
       <Header onViewingSaved={onViewingSaved}/>
+      {/* Ternary statement to determine which page to render. Designed so that upon clicking on their respective icons, the page switches between BookCards and SavedList */}
       {
-        viewingSaved ? <SavedList savedBooks={savedBooks} setSavedBooks={setSavedBooks}/> : <BookCards books={books} setBooks={setBooks} savedBooks={savedBooks} setSavedBooks={setSavedBooks} init_flag={init_flag} setInit_flag={setInit_flag}/>
+        viewingSaved ? <SavedList savedBooks={savedBooks} setSavedBooks={setSavedBooks}/> : <BookCards books={books} setBooks={setBooks} savedBooks={savedBooks} setSavedBooks={setSavedBooks}/>
       }
     </div>
   );

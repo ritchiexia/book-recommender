@@ -6,6 +6,7 @@ import React, {useEffect, useRef} from 'react'
 import TinderCard from "react-tinder-card";
 import './BookCards.css';
 
+// enum for the different swipe directions
 const directions = {
 	LIKE: "right",
 	DISLIKE: "left",
@@ -14,19 +15,21 @@ const directions = {
 }
 
 function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
+
+    /* JavaScript states aren't updated live, so we must use local variables, or refContainers, to store values that we will need within the same instance of BookCards */
+    // refContainer determines whether or not a book is pending to be saved
     const refContainer = useRef({current: false});
+    // currBook contains the book information of the book JUST swiped on. Primarily used to remove the book from the stack
     const currBook = useRef({current: null});
+    // checkBook contains the book information of the book being displayed currently. Primarily used to send the correct book to the backend along with a sentiment.
     const checkBook = useRef({current: books[0]});
 
     useEffect(() => {
-        // console.log("Current book stack:", {books});
-        // console.log("Top book on stack:", books[books.length-1]);
-        console.log("Saved books:", {savedBooks});
-
-        // check to see if we add current book to saved list, and if so, do it
+        // check to see if we add current book to saved list and that it isn't part of the initial tutorial books, and if so, do it
         if (refContainer.current === true && parseInt(currBook.current.init_flag) !== 1) {
-            console.log('made it into if statemetn');
             setSavedBooks((prevSavedBooks) => {
+                // since we are updating multiple states, useEffect is called twice.
+                // to only add an entry once, we check to see if the book is already in the SavedList
                 var found = false;
                 for (var i = 0; i < prevSavedBooks.length; i++) {
                     if (prevSavedBooks[i].id === currBook.current.id) {
@@ -44,41 +47,52 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
 
         // check to see if card stack is empty
         if (books.length === 0) {
-           // console.log("let's wait to fetch")
-            // call fetch to endpoint to get next 5 BEST recommendations
-            //while(init_flag.current === 0 && pause.current === 1){
-            //   setTimeout(()=>{console.log(pause.current--)}, 20000)
-           // }
-            //console.log("I'm done waiting")
+            // call fetch to endpoint to get next 5 BEST recommendations; by default, fetch calls get()
             fetch('book/1').then(res => res.json()).then((value) => {
-                // add the returned value of books to the stack of cards, make sure you CLEAN the data/extract what we need and put it where it needs to be
+                // add the returned value of books to the stack of cards after unpacking the different books
                 setBooks([value['one'],value['two'],value['three'],value['four'],value['five']]);
+                // update the book currently being displayed at the top
                 checkBook.current = value['five'];
             });
         }
     });
 
+    /**
+     * Performs an action when a BookCard is BEING swiped
+     * @param {*} direction: the direction the current card is being swiped in
+     */
     const onSwipe = (direction) => {
-        
+        // if more implementation is desired, code below here
     }
 
+    /**
+     * Performs an action when a BookCard LEAVES the screen completely
+     * @param {*} direction: the direction the just-swiped card was swiped to
+     */
     const onCardLeftScreen = (direction) => {
+        // switch statement determines which direction the user swiped in
         switch (direction) {
             case directions.LIKE:
+                /**
+                 * json information to be passed to the backend, contains:
+                 *  - init_flag: should only be 1 if the current book being swiped is part of the initial hard-coded books
+                 *  - book_id: the current book's GoodBooks id
+                 *  - sentiment: the user's response to the current book; 1 being positive, 0 being negative
+                 */
                 const data = { init_flag: (checkBook.current.init_flag == null) ? 0 : 1, book_id: checkBook.current.id, sentiment: 1 };
-                // send the book id and "1" response to backend
+                // check to see if book id is valid (should only be false for information cards)
                 if (checkBook.current.id > 0) {
-                    console.log('fetching:', checkBook.current.id);
                     fetch('book/1', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify(data)
                         }).then(res => res.json()).then((value) => {
-                            if(value['alert'] === 1){
+                            if(value['alert'] === 1) {
                                 alert("You have been matched! Swipe away!")
                             }
-                    })
+                        })
                 }
+                // set flag variable to save the current book to the user's SavedList
                 refContainer.current = true;
 
                 console.log("Liked");
@@ -86,9 +100,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
             case directions.DISLIKE:
                 const data1 = { init_flag: (checkBook.current.init_flag == null) ? 0 : 1, book_id: checkBook.current.id, sentiment: 0 };
                 // send the book id and "0" response to backend
-                console.log('CheckBook id:', checkBook.current.id);
                 if (checkBook.current.id > 0) {
-                    console.log('fetching:', checkBook.current.id);
                     fetch('book/1', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -106,7 +118,6 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 const data2 = { init_flag: (checkBook.current.init_flag == null) ? 0 : 1, book_id: checkBook.current.id, sentiment: 1 };
                 // send the book id and "1" response to backend
                 if (checkBook.current.id > 0) {
-                    console.log('fetching:', checkBook.current.id);
                     fetch('book/1', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -143,7 +154,7 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                 break;
         }
 
-        // remove currBook from the card stack
+        // remove currBook from the card stack and set the book that is just about to be displayed
         setBooks((previousBooks) => {
             currBook.current = previousBooks[previousBooks.length-1];
             if (previousBooks.length > 1) {
