@@ -17,7 +17,6 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
     const refContainer = useRef({current: false});
     const currBook = useRef({current: null});
     const init_flag = useRef(18);
-    const pause = useRef(1)
 
     useEffect(() => {
         // console.log("Current book stack:", {books});
@@ -70,6 +69,10 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify(data)
+                    }).then(res => res.json()).then((value) => {
+                        if(value['alert'] === 1){
+                            alert("You have been matched! Swipe away!")
+                        }
                     })
                 init_flag.current--;
                 refContainer.current = true;
@@ -83,6 +86,10 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify(data1)
+                    }).then(res => res.json()).then((value) => {
+                        if(value['alert'] === 1){
+                            alert("You have been matched! Swipe away!")
+                        }
                     })
                 init_flag.current--;
 
@@ -95,6 +102,10 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify(data2)
+                    }).then(res => res.json()).then((value) => {
+                        if(value['alert'] === 1){
+                            alert("You have been matched! Swipe away!")
+                        }
                     })
                 init_flag.current--;
                     
@@ -107,6 +118,10 @@ function BookCards({books, setBooks, savedBooks, setSavedBooks}) {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify(data3)
+                    }).then(res => res.json()).then((value) => {
+                        if(value['alert'] === 1){
+                            alert("You have been matched! Swipe away!")
+                        }
                     })
                 init_flag.current--;
 

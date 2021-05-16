@@ -10,7 +10,7 @@ NumBooks = 5 #Constant number of books to recommend per iteration
 RecBatches = 300 #Constant number of books to add to the recommendation list for RL
 BoostBatch = 100 #Constant number of books to add to the rec list when needed
 BoostThreshold = RecBatches-BoostBatch
-NumBooks = 9810
+TotalNumBooks = 9810
 NumUsers = 53424
 hardcoded = [3,15,18,815,96,4,9,127,14,2458,2738,316,60,5,2992,259,617,237]
 
@@ -162,7 +162,7 @@ class User ():
     user_feature_vector = model.user_embedding(emb_index) # get feature vector for user 0
     row = matrix[self.pair_id].detach().numpy()
     self.to_recommend = []
-    for i in range(NumBooks):
+    for i in range(TotalNumBooks):
       self.to_recommend.append([i, row[i]])
     self.to_recommend = sorted(self.to_recommend, key=lambda x : x[1]) #From https://stackoverflow.com/a/4174956
     self.to_recommend.reverse()
@@ -207,10 +207,10 @@ def create_matrix(model):
   index = torch.IntTensor([range(53424)])
   #index = index.to(device)
   userMat = model.user_embedding(index)[0]
-  index = torch.IntTensor([range(NumBooks)])
+  index = torch.IntTensor([range(TotalNumBooks)])
   #index = index.to(device)
   old = model.book_embedding(index)[0]
-  bookMat = torch.zeros(24,NumBooks)
+  bookMat = torch.zeros(24,TotalNumBooks)
   for i in range(24):
     bookMat[i] = torch.narrow(old,1,i,1).flatten()
   #bookMat = bookMat.to(device)
@@ -218,7 +218,7 @@ def create_matrix(model):
   return torch.sigmoid(result)*5.5
 
 def create_book_feature_matrix(model):
-    index = torch.IntTensor([range(NumBooks)])
+    index = torch.IntTensor([range(TotalNumBooks)])
     return model.book_embedding(index)[0]
 
 class RLModel(nn.Module):
@@ -277,15 +277,17 @@ def get_recs(users, user_id, b_matrix, collection):
 def update_model(users, user_id, init_flag, sentiments, ratings, model_matrix, b_matrix, model): #sentiments is (book_id,sentiment)
   print(init_flag)
   print(type(user_id))
+  returnBool = False
   if init_flag:
     ratings.append([sentiments[0],5*sentiments[1]])
     #print(init_flag)
     print(len(ratings)) 
-    if len(ratings) == 6:
+    if len(ratings) == 17:
+      returnBool = True
       users[int(user_id)] = User(ratings, model_matrix, int(user_id), 24, model)
       users.append(0)
       ratings = []
   else:
     improve(sentiments[1], sentiments[0], users[int(user_id)], b_matrix) 
-
+  return returnBool
 ######
