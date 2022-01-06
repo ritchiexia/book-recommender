@@ -6,8 +6,8 @@ from tqdm.auto import tqdm
 torch.manual_seed(291)
 np.random.seed(291)
 
-#The code I (Harvir) contributed was through Jupiter Notebooks, and I did not do the final commit for that code, so I
-#am not listed as a contributor. I am commiting this so that this project shows up on my profile.      
+#The code I (Harvir) contributed was through Google Colab, and I did not do the final commit for that code, so I
+#am not listed as a contributor. I am commiting this so that this project shows up on my profile for ease of access.      
 
 NumBooks = 5 #Constant number of books to recommend per iteration
 RecBatches = 300 #Constant number of books to add to the recommendation list for RL
