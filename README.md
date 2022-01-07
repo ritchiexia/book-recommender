@@ -4,7 +4,7 @@
 
 * [Project Description](#project-description)
 * [Setup](#setup)
-* [Web App Walkthrough/How to Use BookCards](#walkthrough)
+* [Web App Walkthrough](#web-app-walkthrough)
 * [Technologies](#technologies)
 * [Video Link](#video-link)
 
@@ -45,7 +45,7 @@ npm install @materials-ui/icons
 
 Use `python3 api.py` to start the flask App and then `npm start` to start the React app.
 
-## Web App Walkthrough/How to Use BookCards
+## Web App Walkthrough
 When you open the BookCards app you are greeted by a tutorial card explaining the function of each swipe direction. 
 
 <img src="https://media.discordapp.net/attachments/824063621864095744/843640348081389589/unknown.png?width=441&height=683">
