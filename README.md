@@ -13,7 +13,7 @@ Our project makes book recommendations powered by machine learning. Our web app 
 
 ## Setup
 
-### Prequuistes 
+### Prerequisites 
 
 1) [`Python`](https://www.python.org/) must be installed on your device.
 2) [`Node`](https://nodejs.org/en/download/) must also be install on your device to install other packages.
@@ -22,7 +22,7 @@ Our project makes book recommendations powered by machine learning. Our web app 
 
 Install these packages using the terminal:
 ```
-pip install flas_restful
+pip install flask_restful
 pip install flask_pymongo
 pip install torch
 pip install numpy
